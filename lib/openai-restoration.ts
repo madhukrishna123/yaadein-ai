@@ -20,6 +20,7 @@ export type RestorationResult = {
   restoredUrl: string;
   watermarkedPath?: string;
   watermarkedUrl?: string;
+  estimatedCostUsd?: number;
 };
 
 export function hasOpenAIImageConfig() {
@@ -34,6 +35,7 @@ export async function restorePhotoForJob(input: {
   const restoredBuffer = hasOpenAIImageConfig()
     ? await restoreWithOpenAI(input.sourceImagePath, input.mode)
     : await restoreWithLocalMock(input.sourceImagePath, input.mode);
+  const estimatedCostUsd = estimateImageCost(input.mode, hasOpenAIImageConfig());
 
   const restoredName = input.mode === "hd" ? "restored-hd.jpg" : "restored-preview.jpg";
   const restored = await saveImageBuffer(restoredBuffer, input.jobId, restoredName);
@@ -47,7 +49,8 @@ export async function restorePhotoForJob(input: {
       restoredPath: restored.absolutePath,
       restoredUrl: restored.publicUrl,
       watermarkedPath: watermarked.absolutePath,
-      watermarkedUrl: watermarked.publicUrl
+      watermarkedUrl: watermarked.publicUrl,
+      estimatedCostUsd
     };
   }
 
@@ -57,7 +60,8 @@ export async function restorePhotoForJob(input: {
   return {
     mode: hasOpenAIImageConfig() ? "openai" : "mock",
     restoredPath: hd.absolutePath,
-    restoredUrl: hd.publicUrl
+    restoredUrl: hd.publicUrl,
+    estimatedCostUsd
   };
 }
 
@@ -113,3 +117,10 @@ async function restoreWithLocalMock(sourceImagePath: string, mode: RestorationMo
 }
 
 export { RESTORATION_PROMPT };
+
+function estimateImageCost(mode: RestorationMode, isOpenAI: boolean) {
+  if (!isOpenAI) return 0;
+  const envValue = mode === "hd" ? process.env.OPENAI_HD_ESTIMATED_COST_USD : process.env.OPENAI_PREVIEW_ESTIMATED_COST_USD;
+  if (envValue) return Number(envValue);
+  return mode === "hd" ? 0.2 : 0.11;
+}

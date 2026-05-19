@@ -23,6 +23,8 @@ export type RestorationJob = {
   restoredHdUrl?: string;
   sharePageSlug: string;
   priceInr: number;
+  previewCostUsd?: number;
+  hdCostUsd?: number;
   processingMode?: "mock" | "openai";
   failureReason?: string;
   createdAt: string;

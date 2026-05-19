@@ -1,26 +1,26 @@
 import { NextResponse } from "next/server";
+import { getJob, updateJob } from "@/lib/job-repository";
 import { restorePhotoForJob } from "@/lib/openai-restoration";
-import { getMockJob, updateMockJob } from "@/lib/mock-store";
 
 export const runtime = "nodejs";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ jobId: string }> }) {
   const { jobId } = await params;
-  const job = getMockJob(jobId);
+  const job = await getJob(jobId);
 
   if (!job) {
     return NextResponse.json({ error: "Job not found" }, { status: 404 });
   }
 
   if (!job.sourceImagePath) {
-    updateMockJob(jobId, {
+    await updateJob(jobId, {
       status: "manual_review",
       failureReason: "No source image path exists for HD export."
     });
     return NextResponse.json({ error: "No source image is available for this job." }, { status: 409 });
   }
 
-  updateMockJob(jobId, { status: "paid", failureReason: undefined });
+  await updateJob(jobId, { status: "paid", failureReason: undefined });
 
   try {
     const result = await restorePhotoForJob({
@@ -29,11 +29,12 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
       mode: "hd"
     });
 
-    const updated = updateMockJob(jobId, {
+    const updated = await updateJob(jobId, {
       status: "hd_ready",
       processingMode: result.mode,
       restoredHdPath: result.restoredPath,
-      restoredHdUrl: result.restoredUrl
+      restoredHdUrl: result.restoredUrl,
+      hdCostUsd: result.estimatedCostUsd
     });
 
     return NextResponse.json({
@@ -46,7 +47,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown HD export error";
-    const updated = updateMockJob(jobId, {
+    const updated = await updateJob(jobId, {
       status: "failed",
       failureReason: message
     });

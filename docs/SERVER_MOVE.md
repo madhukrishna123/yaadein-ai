@@ -78,7 +78,7 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com npm run server:check
 
 ## Production Blockers Before Real Users
 
-- Replace in-memory jobs with Postgres.
+- Run `db/schema.sql` and set `DATABASE_URL`.
 - Replace local `public/uploads` with R2/S3.
 - Add Razorpay payment unlock before HD export.
 - Add one-free-preview-per-phone rule.

@@ -1,26 +1,40 @@
 import { NextResponse } from "next/server";
+import { getCustomerByPhone, getJob, incrementFreePreviewCount, updateJob } from "@/lib/job-repository";
 import { restorePhotoForJob } from "@/lib/openai-restoration";
-import { getMockJob, updateMockJob } from "@/lib/mock-store";
 
 export const runtime = "nodejs";
 
 export async function POST(_request: Request, { params }: { params: Promise<{ jobId: string }> }) {
   const { jobId } = await params;
-  const job = getMockJob(jobId);
+  const job = await getJob(jobId);
 
   if (!job) {
     return NextResponse.json({ error: "Job not found" }, { status: 404 });
   }
 
   if (!job.sourceImagePath) {
-    updateMockJob(jobId, {
+    await updateJob(jobId, {
       status: "manual_review",
       failureReason: "No source image path exists for this job."
     });
     return NextResponse.json({ error: "No source image is available for this job." }, { status: 409 });
   }
 
-  updateMockJob(jobId, { status: "restoring", failureReason: undefined });
+  const customer = await getCustomerByPhone(job.customerPhone);
+  const freePreviewLimit = Number(process.env.FREE_PREVIEW_LIMIT_PER_PHONE ?? 1);
+  if (customer && customer.freePreviewCount >= freePreviewLimit && job.status !== "preview_ready") {
+    const updated = await updateJob(jobId, { status: "awaiting_payment" });
+    return NextResponse.json(
+      {
+        error: "Free preview limit reached. Payment is required for another AI preview.",
+        job: updated,
+        paymentRequired: true
+      },
+      { status: 402 }
+    );
+  }
+
+  await updateJob(jobId, { status: "restoring", failureReason: undefined });
 
   try {
     const result = await restorePhotoForJob({
@@ -29,14 +43,16 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
       mode: "preview"
     });
 
-    const updated = updateMockJob(jobId, {
+    const updated = await updateJob(jobId, {
       status: "preview_ready",
       processingMode: result.mode,
       restoredPreviewPath: result.restoredPath,
       restoredPreviewUrl: result.restoredUrl,
       watermarkedPreviewPath: result.watermarkedPath,
-      watermarkedPreviewUrl: result.watermarkedUrl
+      watermarkedPreviewUrl: result.watermarkedUrl,
+      previewCostUsd: result.estimatedCostUsd
     });
+    await incrementFreePreviewCount(job.customerPhone);
 
     return NextResponse.json({
       job: updated,
@@ -45,7 +61,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown restoration error";
-    const updated = updateMockJob(jobId, {
+    const updated = await updateJob(jobId, {
       status: "failed",
       failureReason: message
     });

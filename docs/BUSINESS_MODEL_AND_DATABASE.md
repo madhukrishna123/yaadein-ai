@@ -112,3 +112,18 @@ Implementation rule:
 6. Update admin dashboard with ROI metrics.
 7. Add Razorpay payment gating before HD export.
 8. Move image files to R2/S3.
+
+## Schema Setup
+
+Run the SQL in `db/schema.sql` against Supabase/Postgres before setting `DATABASE_URL`.
+
+Local app behavior:
+
+- Without `DATABASE_URL`, admin uses in-memory development data.
+- With `DATABASE_URL`, uploads, jobs, statuses, costs, and admin metrics use Postgres.
+
+Production rule:
+
+- Set `FREE_PREVIEW_LIMIT_PER_PHONE=1`.
+- Set `PRICE_SINGLE_RESTORE_INR=199`.
+- Keep `OPENAI_IMAGE_PREVIEW_QUALITY=low`.

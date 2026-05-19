@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createJob } from "@/lib/job-repository";
 import { isSupportedImage, saveUploadedImage } from "@/lib/local-storage";
-import { createJobId, createRestorationJob } from "@/lib/mock-store";
+import { createJobId } from "@/lib/mock-store";
 
 export const runtime = "nodejs";
 
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest) {
 
   const jobId = createJobId();
   const stored = await saveUploadedImage(file, jobId);
-  const job = createRestorationJob({
+  const job = await createJob({
     id: jobId,
     customerPhone: phone,
     sourceImagePath: stored.absolutePath,
