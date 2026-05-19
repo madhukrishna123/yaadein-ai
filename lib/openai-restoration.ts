@@ -1,6 +1,5 @@
-import { createReadStream } from "node:fs";
 import { readFile } from "node:fs/promises";
-import OpenAI from "openai";
+import OpenAI, { toFile } from "openai";
 import { createMockRestoration, createWatermarkedPreview, normalizeHdExport } from "@/lib/image-watermark";
 import { saveImageBuffer } from "@/lib/local-storage";
 
@@ -70,9 +69,14 @@ async function restoreWithOpenAI(sourceImagePath: string, mode: RestorationMode)
       ? process.env.OPENAI_IMAGE_HD_QUALITY ?? "high"
       : process.env.OPENAI_IMAGE_PREVIEW_QUALITY ?? "medium";
 
+  const imageBuffer = await readFile(sourceImagePath);
+  const imageFile = await toFile(imageBuffer, filenameForMime(sourceImagePath), {
+    type: mimeTypeForPath(sourceImagePath)
+  });
+
   const response = await client.images.edit({
     model,
-    image: createReadStream(sourceImagePath),
+    image: imageFile,
     prompt: RESTORATION_PROMPT,
     quality: quality as "low" | "medium" | "high" | "auto",
     size: "auto",
@@ -87,6 +91,20 @@ async function restoreWithOpenAI(sourceImagePath: string, mode: RestorationMode)
   }
 
   return Buffer.from(b64, "base64");
+}
+
+function mimeTypeForPath(filePath: string) {
+  const lower = filePath.toLowerCase();
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".webp")) return "image/webp";
+  return "image/jpeg";
+}
+
+function filenameForMime(filePath: string) {
+  const lower = filePath.toLowerCase();
+  if (lower.endsWith(".png")) return "source.png";
+  if (lower.endsWith(".webp")) return "source.webp";
+  return "source.jpg";
 }
 
 async function restoreWithLocalMock(sourceImagePath: string, mode: RestorationMode) {

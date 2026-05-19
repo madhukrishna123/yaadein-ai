@@ -10,14 +10,54 @@ type DemoState = "idle" | "uploaded" | "processing" | "ready";
 export function FakeWhatsAppDemo() {
   const [state, setState] = useState<DemoState>("idle");
   const [fileName, setFileName] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [error, setError] = useState("");
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
 
-  function handleFile(file?: File) {
+  async function handleFile(file?: File) {
     if (!file) return;
+
     setFileName(file.name);
+    setPreviewUrl("");
+    setError("");
     setState("uploaded");
-    window.setTimeout(() => setState("processing"), 650);
-    window.setTimeout(() => setState("ready"), 3200);
+
+    try {
+      const formData = new FormData();
+      formData.append("phone", "+919999999999");
+      formData.append("photo", file);
+
+      const uploadResponse = await fetch("/api/restoration/upload", {
+        method: "POST",
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        const uploadError = await uploadResponse.json().catch(() => null);
+        throw new Error(uploadError?.error ?? "Photo upload failed.");
+      }
+
+      const uploadData = (await uploadResponse.json()) as {
+        job: { id: string; sharePageSlug: string };
+      };
+
+      setState("processing");
+
+      const restoreResponse = await fetch(`/api/jobs/${uploadData.job.id}/restore`, {
+        method: "POST"
+      });
+
+      if (!restoreResponse.ok) {
+        const restoreError = await restoreResponse.json().catch(() => null);
+        throw new Error(restoreError?.error ?? "Restoration failed.");
+      }
+
+      setPreviewUrl(`/preview/${uploadData.job.sharePageSlug}`);
+      setState("ready");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Something went wrong while restoring this photo.");
+      setState("idle");
+    }
   }
 
   return (
@@ -83,19 +123,31 @@ export function FakeWhatsAppDemo() {
         {state === "ready" ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
             <ChatBubble side="left">
-              Your free preview is ready. Unlock the HD photo without watermark for INR 149.
+              <span className="block">Your free preview is ready. Unlock the HD photo without watermark for INR 149.</span>
+              {previewUrl ? (
+                <a className="mt-3 inline-flex text-heirloom underline" href={previewUrl}>
+                  Open preview
+                </a>
+              ) : null}
             </ChatBubble>
           </motion.div>
+        ) : null}
+
+        {error ? (
+          <ChatBubble side="left">
+            <span className="text-roseglass">{error}</span>
+          </ChatBubble>
         ) : null}
       </div>
 
       <label className="mt-4 flex cursor-pointer items-center justify-between rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm transition hover:border-heirloom/60">
-        <span>{state === "idle" ? "Choose an old photo" : "Try another photo"}</span>
-        <Send size={17} />
+        <span>{state === "processing" ? "Restoring..." : state === "idle" ? "Choose an old photo" : "Try another photo"}</span>
+        {state === "processing" ? <Loader2 className="animate-spin" size={17} /> : <Send size={17} />}
         <input
           className="hidden"
           type="file"
           accept="image/*"
+          disabled={state === "processing"}
           onChange={(event) => handleFile(event.target.files?.[0])}
         />
       </label>
