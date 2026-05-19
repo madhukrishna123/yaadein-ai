@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run lint && npm run typecheck && npm run build",
+    "server:check": "node scripts/server-check.mjs",
+    "env:check": "node scripts/check-env.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.25",

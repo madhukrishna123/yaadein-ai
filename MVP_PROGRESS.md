@@ -29,6 +29,12 @@
   - `POST /api/restoration/upload`
   - `POST /api/jobs/:jobId/restore`
   - `POST /api/jobs/:jobId/export-hd`
+- Server move scripts and docs added:
+  - `npm run verify`
+  - `npm run env:check`
+  - `npm run server:check`
+  - `docs/SERVER_MOVE.md`
+  - `docs/BUSINESS_MODEL_AND_DATABASE.md`
 
 ## Local URL
 
@@ -49,7 +55,7 @@
 
 1. Replace in-memory job storage with database models.
 2. Replace local `public/uploads` storage with Cloudflare R2 or AWS S3.
-3. Add real API-key smoke test for OpenAI restoration.
-4. Add Razorpay payment link and webhook verification.
-5. Connect WhatsApp Business Cloud API.
-6. Add production deployment environment.
+3. Enforce one free preview per phone number.
+4. Track OpenAI preview/HD cost per job.
+5. Add Razorpay payment link and webhook verification.
+6. Connect WhatsApp Business Cloud API.
