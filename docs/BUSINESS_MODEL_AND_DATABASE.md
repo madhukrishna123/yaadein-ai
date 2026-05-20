@@ -127,3 +127,11 @@ Production rule:
 - Set `FREE_PREVIEW_LIMIT_PER_PHONE=1`.
 - Set `PRICE_SINGLE_RESTORE_INR=199`.
 - Keep `OPENAI_IMAGE_PREVIEW_QUALITY=low`.
+
+Local setup commands:
+
+```bash
+npm run db:start
+npm run db:schema
+npm run db:check
+```

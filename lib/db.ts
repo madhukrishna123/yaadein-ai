@@ -15,10 +15,16 @@ export function getPool() {
 
   pool ??= new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL.includes("localhost") ? false : { rejectUnauthorized: false }
+    ssl: shouldUseSsl(process.env.DATABASE_URL) ? { rejectUnauthorized: false } : false
   });
 
   return pool;
+}
+
+function shouldUseSsl(databaseUrl: string) {
+  if (databaseUrl.includes("localhost") || databaseUrl.includes("127.0.0.1")) return false;
+  if (databaseUrl.includes("sslmode=disable")) return false;
+  return true;
 }
 
 export async function query<T extends pg.QueryResultRow>(text: string, values: unknown[] = []) {

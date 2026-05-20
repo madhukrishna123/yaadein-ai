@@ -15,6 +15,7 @@ Run locally before any deployment:
 
 ```bash
 npm install
+npm run db:check
 npm run verify
 npm run env:check
 ```
@@ -83,6 +84,27 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com npm run server:check
 - Add Razorpay payment unlock before HD export.
 - Add one-free-preview-per-phone rule.
 - Add WhatsApp Business Cloud API.
+
+## Local Postgres Setup
+
+For local database mode:
+
+```bash
+npm run db:start
+```
+
+Add the printed `DATABASE_URL` to `.env.local`, then run:
+
+```bash
+npm run db:schema
+npm run db:check
+```
+
+Restart the dev server. The admin page should show:
+
+```text
+Admin data source: database
+```
 
 ## Rollback
 

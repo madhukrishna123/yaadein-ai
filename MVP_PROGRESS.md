@@ -35,6 +35,12 @@
   - `npm run server:check`
   - `docs/SERVER_MOVE.md`
   - `docs/BUSINESS_MODEL_AND_DATABASE.md`
+- Local Postgres database connected:
+  - `npm run db:start`
+  - `npm run db:schema`
+  - `npm run db:check`
+  - Admin API reports `storageMode: database`
+  - Upload-only test job persisted to Postgres
 
 ## Local URL
 
@@ -45,7 +51,6 @@
 ## Next Required Inputs
 
 - Real WhatsApp Business phone number.
-- OpenAI API key.
 - Razorpay account details.
 - Storage choice: Cloudflare R2 or AWS S3.
 - Domain name.
@@ -53,9 +58,8 @@
 
 ## Next Build Steps
 
-1. Replace in-memory job storage with database models.
-2. Replace local `public/uploads` storage with Cloudflare R2 or AWS S3.
-3. Enforce one free preview per phone number.
-4. Track OpenAI preview/HD cost per job.
-5. Add Razorpay payment link and webhook verification.
-6. Connect WhatsApp Business Cloud API.
+1. Replace local `public/uploads` storage with Cloudflare R2 or AWS S3.
+2. Add Razorpay payment link and webhook verification.
+3. Connect WhatsApp Business Cloud API.
+4. Add production Supabase/Postgres connection.
+5. Add production deployment environment.
