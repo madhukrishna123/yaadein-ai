@@ -31,7 +31,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
 
     const updated = await updateJob(jobId, {
       status: "hd_ready",
-      processingMode: result.mode,
+      processingMode: result.provider,
       restoredHdPath: result.restoredPath,
       restoredHdUrl: result.restoredUrl,
       hdCostUsd: result.estimatedCostUsd
@@ -43,7 +43,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
         "Payment received. Thank you.",
         "Your restored HD memory is ready."
       ],
-      mode: result.mode
+      mode: result.provider
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown HD export error";

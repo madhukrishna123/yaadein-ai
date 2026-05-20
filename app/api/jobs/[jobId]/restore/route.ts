@@ -45,7 +45,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
 
     const updated = await updateJob(jobId, {
       status: "preview_ready",
-      processingMode: result.mode,
+      processingMode: result.provider,
       restoredPreviewPath: result.restoredPath,
       restoredPreviewUrl: result.restoredUrl,
       watermarkedPreviewPath: result.watermarkedPath,
@@ -57,7 +57,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
     return NextResponse.json({
       job: updated,
       previewPage: `/preview/${job.sharePageSlug}`,
-      mode: result.mode
+      mode: result.provider
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown restoration error";

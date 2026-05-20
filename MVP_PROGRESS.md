@@ -41,6 +41,10 @@
   - `npm run db:check`
   - Admin API reports `storageMode: database`
   - Upload-only test job persisted to Postgres
+- Model provider layer added:
+  - Preview provider defaults to `local`
+  - Paid HD provider defaults to `openai`
+  - Future self-hosted provider slot reserved
 
 ## Local URL
 

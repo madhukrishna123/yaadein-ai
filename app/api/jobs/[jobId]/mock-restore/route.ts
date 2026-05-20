@@ -33,7 +33,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
 
   const job = updateMockJob(jobId, {
     status: "preview_ready",
-    processingMode: result.mode,
+    processingMode: result.provider,
     restoredPreviewPath: result.restoredPath,
     restoredPreviewUrl: result.restoredUrl,
     watermarkedPreviewPath: result.watermarkedPath,
@@ -43,6 +43,6 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
   return NextResponse.json({
     job,
     previewPage: `/preview/${existing.sharePageSlug}`,
-    mode: result.mode
+    mode: result.provider
   });
 }

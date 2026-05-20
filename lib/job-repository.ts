@@ -191,7 +191,7 @@ export async function updateJob(jobId: string, patch: Partial<RestorationJob>) {
     values
   );
 
-  return result.rows[0] ? mapJob(result.rows[0]) : undefined;
+  return result.rows[0] ? getJob(result.rows[0].id) : undefined;
 }
 
 export async function incrementFreePreviewCount(customerPhone: string) {

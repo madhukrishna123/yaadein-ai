@@ -36,7 +36,7 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
 
   const job = updateMockJob(jobId, {
     status: "hd_ready",
-    processingMode: result.mode,
+    processingMode: result.provider,
     restoredHdPath: result.restoredPath,
     restoredHdUrl: result.restoredUrl
   });
@@ -47,6 +47,6 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
       "Payment received. Thank you.",
       "Your restored HD memory is ready."
     ],
-    mode: result.mode
+    mode: result.provider
   });
 }

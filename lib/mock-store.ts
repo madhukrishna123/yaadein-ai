@@ -25,7 +25,7 @@ export type RestorationJob = {
   priceInr: number;
   previewCostUsd?: number;
   hdCostUsd?: number;
-  processingMode?: "mock" | "openai";
+  processingMode?: "mock" | "local" | "openai" | "future-self-hosted";
   failureReason?: string;
   createdAt: string;
   updatedAt: string;

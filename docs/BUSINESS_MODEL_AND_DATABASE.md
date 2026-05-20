@@ -34,10 +34,25 @@ OPENAI_IMAGE_HD_QUALITY=high
 
 Implementation rule:
 
-- Preview uses low/cheaper fidelity.
-- HD uses high fidelity after payment.
+- Preview uses the configured cheap provider.
+- HD uses OpenAI high quality after payment.
 - Track estimated cost per job.
 - Stop repeated free previews per phone number.
+
+Phase 1 provider routing:
+
+```env
+RESTORATION_PREVIEW_PROVIDER=local
+RESTORATION_HD_PROVIDER=openai
+OPENAI_PREVIEW_INPUT_FIDELITY=low
+OPENAI_HD_INPUT_FIDELITY=high
+```
+
+Supported providers today:
+
+- `local`: cheap Sharp-based preview enhancement.
+- `openai`: OpenAI image edit call.
+- `future-self-hosted`: reserved for Qwen/FLUX/restoration stack experiments; not implemented yet.
 
 ## Database Tables
 
