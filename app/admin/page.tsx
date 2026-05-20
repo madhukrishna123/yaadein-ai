@@ -81,7 +81,10 @@ export default async function AdminPage() {
         </div>
 
         <div className="mb-6 rounded-[8px] border border-white/10 bg-white/[0.05] p-4 text-sm text-[#d8cbb9]">
-          Admin data source: <span className="font-semibold text-heirloom">{data.summary.storageMode}</span>. Configure `DATABASE_URL` and run `db/schema.sql` to switch from memory to database.
+          Admin data source: <span className="font-semibold text-heirloom">{data.summary.storageMode}</span>.{" "}
+          {data.summary.storageMode === "database"
+            ? "Jobs and metrics are now persisted in Postgres."
+            : "Configure DATABASE_URL and run db/schema.sql to switch from memory to database."}
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
