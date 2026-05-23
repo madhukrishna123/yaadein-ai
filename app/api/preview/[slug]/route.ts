@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { mockJobs } from "@/lib/mock-store";
+import { getJobBySlug } from "@/lib/job-repository";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const job = mockJobs.find((item) => item.sharePageSlug === slug);
+  const job = await getJobBySlug(slug);
 
   if (!job) {
     return NextResponse.json({ error: "Preview not found" }, { status: 404 });
@@ -15,6 +15,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
       jobId: job.id,
       status: job.status,
       priceInr: job.priceInr,
+      sourceImageUrl: job.sourceImageUrl,
+      restoredPreviewUrl: job.restoredPreviewUrl,
+      restoredHdUrl: job.restoredHdUrl,
       watermarkedPreviewUrl: job.watermarkedPreviewUrl
     }
   });

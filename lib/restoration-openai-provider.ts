@@ -1,6 +1,6 @@
-import { readFile } from "node:fs/promises";
 import OpenAI, { toFile } from "openai";
 import { RestorationMode, RestorationProviderResult } from "@/lib/restoration-types";
+import { readStoredImageBuffer } from "@/lib/storage-read";
 
 const RESTORATION_PROMPT = [
   "Restore this old damaged photograph into a realistic high-definition image while preserving identity, emotions, authenticity, skin texture, clothing details, facial structure, age, expression, and historical accuracy.",
@@ -27,7 +27,7 @@ export async function restoreWithOpenAIProvider(sourceImagePath: string, mode: R
       ? process.env.OPENAI_HD_INPUT_FIDELITY ?? "high"
       : process.env.OPENAI_PREVIEW_INPUT_FIDELITY ?? "low";
 
-  const imageBuffer = await readFile(sourceImagePath);
+  const imageBuffer = await readStoredImageBuffer(sourceImagePath);
   const imageFile = await toFile(imageBuffer, filenameForMime(sourceImagePath), {
     type: mimeTypeForPath(sourceImagePath)
   });

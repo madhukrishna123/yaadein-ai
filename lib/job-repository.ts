@@ -151,6 +151,25 @@ export async function getJob(jobId: string) {
   return result.rows[0] ? mapJob(result.rows[0]) : undefined;
 }
 
+export async function getJobBySlug(slug: string) {
+  if (!hasDatabaseConfig()) {
+    return mockJobs.find((job) => job.sharePageSlug === slug);
+  }
+
+  const result = await query<JobRow>(
+    `
+      select restoration_jobs.*, customers.whatsapp_phone
+      from restoration_jobs
+      left join customers on customers.id = restoration_jobs.customer_id
+      where restoration_jobs.share_page_slug = $1
+      limit 1
+    `,
+    [slug]
+  );
+
+  return result.rows[0] ? mapJob(result.rows[0]) : undefined;
+}
+
 export async function updateJob(jobId: string, patch: Partial<RestorationJob>) {
   if (!hasDatabaseConfig()) return updateMockJob(jobId, patch);
 

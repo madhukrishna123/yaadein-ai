@@ -45,6 +45,11 @@
   - Preview provider defaults to `local`
   - Paid HD provider defaults to `openai`
   - Future self-hosted provider slot reserved
+- R2 storage integration added:
+  - New uploads/previews/exports use R2 when R2 env vars are present
+  - Local storage remains fallback
+  - Private file-serving route added for R2 objects
+- Preview page now reads real database jobs by share slug and displays stored images
 
 ## Local URL
 
@@ -62,8 +67,7 @@
 
 ## Next Build Steps
 
-1. Replace local `public/uploads` storage with Cloudflare R2 or AWS S3.
-2. Add Razorpay payment link and webhook verification.
-3. Connect WhatsApp Business Cloud API.
-4. Add production Supabase/Postgres connection.
-5. Add production deployment environment.
+1. Add Razorpay payment link and webhook verification.
+2. Connect WhatsApp Business Cloud API.
+3. Add production Supabase/Postgres connection.
+4. Add production deployment environment.

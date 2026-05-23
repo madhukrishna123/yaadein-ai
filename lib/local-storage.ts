@@ -1,11 +1,13 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { hasR2Config, putR2Object } from "@/lib/r2-storage";
 
 const uploadRoot = path.join(process.cwd(), "public", "uploads");
 
 export type StoredFile = {
   absolutePath: string;
   publicUrl: string;
+  key?: string;
 };
 
 export async function ensureUploadDir(...segments: string[]) {
@@ -16,9 +18,25 @@ export async function ensureUploadDir(...segments: string[]) {
 
 export async function saveUploadedImage(file: File, jobId: string): Promise<StoredFile> {
   const extension = extensionFromFile(file);
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (hasR2Config()) {
+    const key = `${jobId}/original.${extension}`;
+    const stored = await putR2Object({
+      key,
+      body: buffer,
+      contentType: file.type || mimeTypeForExtension(extension)
+    });
+
+    return {
+      absolutePath: stored.key,
+      publicUrl: stored.url,
+      key: stored.key
+    };
+  }
+
   const directory = await ensureUploadDir(jobId);
   const absolutePath = path.join(directory, `original.${extension}`);
-  const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(absolutePath, buffer);
 
   return {
@@ -28,6 +46,21 @@ export async function saveUploadedImage(file: File, jobId: string): Promise<Stor
 }
 
 export async function saveImageBuffer(buffer: Buffer, jobId: string, name: string): Promise<StoredFile> {
+  if (hasR2Config()) {
+    const key = `${jobId}/${name}`;
+    const stored = await putR2Object({
+      key,
+      body: buffer,
+      contentType: mimeTypeForExtension(name.split(".").pop() ?? "jpg")
+    });
+
+    return {
+      absolutePath: stored.key,
+      publicUrl: stored.url,
+      key: stored.key
+    };
+  }
+
   const directory = await ensureUploadDir(jobId);
   const absolutePath = path.join(directory, name);
   await writeFile(absolutePath, buffer);
@@ -53,4 +86,10 @@ export function extensionFromFile(file: File) {
 
 export function isSupportedImage(file: File) {
   return ["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(file.type);
+}
+
+function mimeTypeForExtension(extension: string) {
+  if (extension === "png") return "image/png";
+  if (extension === "webp") return "image/webp";
+  return "image/jpeg";
 }
