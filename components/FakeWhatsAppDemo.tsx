@@ -69,15 +69,15 @@ export function FakeWhatsAppDemo() {
           </div>
           <div>
             <p className="font-semibold">Yaadein AI</p>
-            <p className="text-xs text-[#b9ac9a]">Business account</p>
+            <p className="text-xs text-[#b9ac9a]">Private restoration studio</p>
           </div>
         </div>
-        <span className="rounded-full bg-mintglass/14 px-3 py-1 text-xs text-mintglass">online</span>
+        <span className="rounded-full bg-mintglass/14 px-3 py-1 text-xs text-mintglass">ready</span>
       </div>
 
       <div className="scrollbar-clean max-h-[28rem] space-y-3 overflow-y-auto pr-1">
-        <ChatBubble side="left">Namaste. Send us one old photo and we will restore it into a clean HD memory.</ChatBubble>
-        <ChatBubble side="left">A scanned photo or a well-lit phone picture both work. Avoid glare if possible.</ChatBubble>
+        <ChatBubble side="left">Upload one old photo. We will create a free watermarked restoration preview.</ChatBubble>
+        <ChatBubble side="left">Scanned photos and clear phone pictures both work. Avoid glare for best results.</ChatBubble>
 
         {fileName ? (
           <ChatBubble side="right">
@@ -91,7 +91,7 @@ export function FakeWhatsAppDemo() {
         <AnimatePresence>
           {state !== "idle" ? (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-              <ChatBubble side="left">Got it. This looks like a precious memory. We are starting the restoration now.</ChatBubble>
+              <ChatBubble side="left">Got it. This looks like a precious memory. Restoration has started.</ChatBubble>
             </motion.div>
           ) : null}
         </AnimatePresence>
@@ -123,7 +123,7 @@ export function FakeWhatsAppDemo() {
         {state === "ready" ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
             <ChatBubble side="left">
-              <span className="block">Your free preview is ready. Unlock the HD photo without watermark for INR 149.</span>
+              <span className="block">Your free preview is ready. Unlock the HD photo without watermark for INR 199.</span>
               {previewUrl ? (
                 <a className="mt-3 inline-flex text-heirloom underline" href={previewUrl}>
                   Open preview
@@ -141,7 +141,7 @@ export function FakeWhatsAppDemo() {
       </div>
 
       <label className="mt-4 flex cursor-pointer items-center justify-between rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm transition hover:border-heirloom/60">
-        <span>{state === "processing" ? "Restoring..." : state === "idle" ? "Choose an old photo" : "Try another photo"}</span>
+        <span>{state === "processing" ? "Restoring..." : state === "idle" ? "Upload old photo" : "Restore another photo"}</span>
         {state === "processing" ? <Loader2 className="animate-spin" size={17} /> : <Send size={17} />}
         <input
           className="hidden"

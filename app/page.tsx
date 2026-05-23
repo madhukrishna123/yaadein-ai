@@ -1,9 +1,11 @@
 import {
   ArrowRight,
   BadgeIndianRupee,
-  Bot,
   CheckCircle2,
   Clock3,
+  Download,
+  Heart,
+  ImageUp,
   MessageCircle,
   ShieldCheck,
   Sparkles
@@ -12,13 +14,46 @@ import Link from "next/link";
 import { BeforeAfter } from "@/components/BeforeAfter";
 import { FakeWhatsAppDemo } from "@/components/FakeWhatsAppDemo";
 import { Section } from "@/components/Section";
-import { agents, pricingPlans, whatsappLink } from "@/lib/yaadein-data";
+import { pricingPlans, whatsappLink } from "@/lib/yaadein-data";
 
-const steps = [
-  "Send your old photo on WhatsApp",
-  "Get a free watermarked preview",
-  "Pay only if you love it",
-  "Receive the HD photo on WhatsApp"
+const restorationFeatures = [
+  "Scratch and dust cleanup",
+  "Natural face sharpening",
+  "Faded color recovery",
+  "HD export after approval"
+];
+
+const useCases = [
+  {
+    title: "Parents and grandparents",
+    text: "Restore faded portraits, album photos, and old family moments without changing the person."
+  },
+  {
+    title: "Wedding memories",
+    text: "Repair blur, damage, low light, and aging so special ceremonies feel alive again."
+  },
+  {
+    title: "Childhood albums",
+    text: "Turn small, scratched, phone-captured prints into clean previews ready to share."
+  }
+];
+
+const promiseCards = [
+  {
+    icon: ShieldCheck,
+    title: "Identity stays real",
+    text: "Faces are enhanced gently so the restored photo still feels like the person you remember."
+  },
+  {
+    icon: Heart,
+    title: "Preview before paying",
+    text: "See a watermarked result first. Unlock HD only when the memory feels worth keeping."
+  },
+  {
+    icon: Clock3,
+    title: "Fast restoration flow",
+    text: "Upload, restore, preview, unlock. The journey is built for mobile and WhatsApp sharing."
+  }
 ];
 
 export default function Home() {
@@ -30,9 +65,9 @@ export default function Home() {
             Yaadein AI
           </Link>
           <div className="hidden items-center gap-6 text-sm text-[#cbbda9] sm:flex">
-            <a href="#demo">Demo</a>
+            <a href="#restore">Restore</a>
             <a href="#pricing">Pricing</a>
-            <a href="/admin">Admin</a>
+            <a href="#care">Care</a>
           </div>
           <a
             className="inline-flex items-center gap-2 rounded-full bg-heirloom px-4 py-2 text-sm font-semibold text-ink transition hover:bg-[#efcf83]"
@@ -43,38 +78,38 @@ export default function Home() {
         </div>
       </nav>
 
-      <section className="px-5 pb-12 pt-28 sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_0.86fr] lg:items-center">
+      <section className="px-5 pb-14 pt-28 sm:px-8 lg:px-12">
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.98fr_1fr] lg:items-center">
           <div>
             <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-heirloom/30 bg-heirloom/10 px-4 py-2 text-sm text-heirloom">
-              <Sparkles size={16} /> WhatsApp-first AI photo restoration
+              <Sparkles size={16} /> AI restoration for old family photos
             </p>
             <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] text-[#fff7ea] sm:text-6xl lg:text-7xl">
-              Restore memories lost in time.
+              Bring old photos back to life.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#d8cbb9]">
-              Send an old family photo on WhatsApp. Yaadein AI restores it into a clean HD memory
-              while preserving the real face, clothes, texture, and feeling of the original.
+              Yaadein AI restores damaged, faded, and blurry memories into beautiful HD photos while preserving identity,
+              expression, clothing, and the original feeling of the moment.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
                 className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink transition hover:bg-[#efcf83]"
-                href={whatsappLink}
+                href="#restore"
               >
-                <MessageCircle size={19} /> Restore on WhatsApp
+                <ImageUp size={19} /> Upload old photo
               </a>
               <a
                 className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/14 bg-white/[0.06] px-5 py-3 font-semibold text-[#fff7ea] transition hover:border-heirloom/50"
-                href="#demo"
+                href={whatsappLink}
               >
-                See before and after
+                <MessageCircle size={19} /> Start on WhatsApp
               </a>
             </div>
-            <div className="mt-9 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
-              {steps.map((step, index) => (
-                <div key={step} className="rounded-[8px] border border-white/10 bg-white/[0.05] p-3">
-                  <p className="mb-2 text-xs font-semibold text-heirloom">0{index + 1}</p>
-                  <p className="text-sm leading-5 text-[#eadfce]">{step}</p>
+            <div className="mt-9 grid max-w-2xl grid-cols-2 gap-3">
+              {restorationFeatures.map((feature) => (
+                <div key={feature} className="flex items-center gap-2 rounded-[8px] border border-white/10 bg-white/[0.05] p-3">
+                  <CheckCircle2 className="shrink-0 text-mintglass" size={17} />
+                  <p className="text-sm leading-5 text-[#eadfce]">{feature}</p>
                 </div>
               ))}
             </div>
@@ -83,32 +118,11 @@ export default function Home() {
         </div>
       </section>
 
-      <Section eyebrow="Live flow" id="demo" title="The app feels like a calm WhatsApp studio">
-        <div className="grid gap-6 lg:grid-cols-[0.86fr_1fr] lg:items-start">
+      <Section eyebrow="Restore Now" id="restore" title="Upload a photo and get a free preview">
+        <div className="grid gap-6 lg:grid-cols-[0.9fr_1fr] lg:items-start">
           <FakeWhatsAppDemo />
-          <div className="space-y-4">
-            {[
-              {
-                icon: ShieldCheck,
-                title: "Identity preserved",
-                text: "The restoration prompt protects facial structure, age, expression, clothing, and historical feel."
-              },
-              {
-                icon: Bot,
-                title: "Automation-ready",
-                text: "The fake WhatsApp flow maps directly to real WhatsApp webhooks when the business number is ready."
-              },
-              {
-                icon: BadgeIndianRupee,
-                title: "Pay after preview",
-                text: "The user sees a watermarked result first and pays INR 149 only when they want the HD export."
-              },
-              {
-                icon: Clock3,
-                title: "Built for speed",
-                text: "The job lifecycle is designed around fast previews, clear states, and admin visibility."
-              }
-            ].map((item) => (
+          <div className="space-y-4" id="care">
+            {promiseCards.map((item) => (
               <div className="glass-panel rounded-[8px] p-5" key={item.title}>
                 <item.icon className="mb-4 text-heirloom" size={22} />
                 <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
@@ -119,7 +133,19 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section eyebrow="Packages" id="pricing" title="Simple pricing for emotional decisions">
+      <Section eyebrow="Memories We Restore" title="Made for photos people feel attached to">
+        <div className="grid gap-4 md:grid-cols-3">
+          {useCases.map((item) => (
+            <div className="glass-panel rounded-[8px] p-6" key={item.title}>
+              <Heart className="mb-5 text-roseglass" size={22} />
+              <h3 className="text-xl font-semibold">{item.title}</h3>
+              <p className="mt-4 leading-7 text-[#cdbfab]">{item.text}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section eyebrow="Pricing" id="pricing" title="Simple pricing after the preview feels right">
         <div className="grid gap-4 md:grid-cols-3">
           {pricingPlans.map((plan) => (
             <div className="glass-panel rounded-[8px] p-6" key={plan.name}>
@@ -135,23 +161,28 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <p className="mt-5 text-sm text-[#b9ac9a]">
-          Preview is free. Pay only when you want the HD version without watermark.
+        <p className="mt-5 flex items-center gap-2 text-sm text-[#b9ac9a]">
+          <Download size={16} /> Free preview first. HD export unlocks after payment.
         </p>
       </Section>
 
-      <Section eyebrow="Company agents" title="Yaadein AI works like a small online company">
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {agents.map((agent) => (
-            <div className="rounded-[8px] border border-white/10 bg-white/[0.045] p-5" key={agent.name}>
-              <CheckCircle2 className="mb-4 text-mintglass" size={20} />
-              <p className="text-lg font-semibold">{agent.name}</p>
-              <p className="mt-1 text-sm text-heirloom">{agent.owner}</p>
-              <p className="mt-4 leading-7 text-[#cdbfab]">{agent.description}</p>
-            </div>
-          ))}
+      <section className="px-5 py-16 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-6xl rounded-[8px] border border-heirloom/25 bg-heirloom/10 p-8 text-center">
+          <p className="text-sm uppercase tracking-[0.22em] text-heirloom">Yaadein AI</p>
+          <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold text-[#fff7ea] sm:text-4xl">
+            Your memories deserve HD.
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl leading-7 text-[#d8cbb9]">
+            Start with one photo. If the preview feels right, unlock the clean HD version and share it with family.
+          </p>
+          <a
+            className="mt-7 inline-flex items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink transition hover:bg-[#efcf83]"
+            href="#restore"
+          >
+            Restore a memory <Sparkles size={18} />
+          </a>
         </div>
-      </Section>
+      </section>
     </main>
   );
 }
