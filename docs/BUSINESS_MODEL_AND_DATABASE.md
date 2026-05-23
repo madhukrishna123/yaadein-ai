@@ -139,6 +139,7 @@ Local app behavior:
 
 Production rule:
 
+- Protect `/admin` and `/api/admin/*` with `ADMIN_PASSWORD`.
 - Set `FREE_PREVIEW_LIMIT_PER_PHONE=1`.
 - Set `PRICE_SINGLE_RESTORE_INR=199`.
 - Keep `OPENAI_IMAGE_PREVIEW_QUALITY=low`.

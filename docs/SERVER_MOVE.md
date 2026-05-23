@@ -5,8 +5,9 @@ This guide keeps the move from local development to a hosted server clean and re
 ## Current Runtime
 
 - Next.js app with Node.js runtime routes.
-- Local file storage is currently `public/uploads`.
-- Jobs are still in in-memory development storage.
+- R2 storage is used when R2 keys are configured, with local storage as fallback.
+- Jobs use Postgres when `DATABASE_URL` is configured, with in-memory storage as local fallback.
+- Admin operations are protected by an operator password cookie.
 - Real OpenAI restoration activates when `OPENAI_API_KEY` is present.
 
 ## Pre-Move Checklist
@@ -35,6 +36,8 @@ Set these in the hosting dashboard:
 ```env
 NEXT_PUBLIC_APP_URL=
 NEXT_PUBLIC_WHATSAPP_NUMBER=
+ADMIN_PASSWORD=
+ADMIN_SESSION_SECRET=
 
 OPENAI_API_KEY=
 OPENAI_IMAGE_MODEL=gpt-image-1.5
@@ -81,15 +84,16 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com npm run server:check
 
 6. Test one low-quality preview only.
 7. Check OpenAI usage cost.
-8. Only then enable marketing traffic.
+8. Open `/admin/login` and confirm the admin page requires the password.
+9. Only then enable marketing traffic.
 
 ## Production Blockers Before Real Users
 
 - Run `db/schema.sql` and set `DATABASE_URL`.
-- Replace local `public/uploads` with R2/S3.
 - Add Razorpay payment unlock before HD export.
 - Add one-free-preview-per-phone rule.
 - Add WhatsApp Business Cloud API.
+- Set a strong `ADMIN_PASSWORD` and unique `ADMIN_SESSION_SECRET`.
 
 ## Local Postgres Setup
 

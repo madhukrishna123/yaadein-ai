@@ -23,8 +23,9 @@
 - `npm run lint` passes.
 - `npm run typecheck` passes.
 - `npm run build` passes.
-- Local browser check passes for `/`, `/admin`, and `/preview/ya-1042-grandparents`.
-- Mock API check passes for `/api/mock-whatsapp/start` and `/api/admin/jobs`.
+- Local browser check passes for `/`, `/admin/login`, and `/preview/ya-1042-grandparents`.
+- Mock API check passes for `/api/mock-whatsapp/start`.
+- Admin API protection check passes for unauthenticated `/api/admin/jobs`.
 - Upload-to-preview-to-HD smoke test passes in mock mode:
   - `POST /api/restoration/upload`
   - `POST /api/jobs/:jobId/restore`
@@ -50,6 +51,10 @@
   - Local storage remains fallback
   - Private file-serving route added for R2 objects
 - Preview page now reads real database jobs by share slug and displays stored images
+- Admin protection added:
+  - `/admin` now requires operator login
+  - `/api/admin/jobs` and retry routes require the admin cookie
+  - Logout route added for the operations dashboard
 
 ## Local URL
 

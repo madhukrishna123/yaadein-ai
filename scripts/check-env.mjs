@@ -1,5 +1,7 @@
 const requiredForProduction = [
   "NEXT_PUBLIC_APP_URL",
+  "ADMIN_PASSWORD",
+  "ADMIN_SESSION_SECRET",
   "OPENAI_API_KEY",
   "OPENAI_IMAGE_MODEL",
   "DATABASE_URL",

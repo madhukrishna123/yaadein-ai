@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
+import { isAdminRequestAuthenticated, unauthorizedAdminResponse } from "@/lib/admin-auth";
 import { updateJob } from "@/lib/job-repository";
 
-export async function POST(_request: Request, { params }: { params: Promise<{ jobId: string }> }) {
+export async function POST(request: Request, { params }: { params: Promise<{ jobId: string }> }) {
+  if (!isAdminRequestAuthenticated(request)) {
+    return unauthorizedAdminResponse();
+  }
+
   const { jobId } = await params;
   const job = await updateJob(jobId, { status: "restoring" });
 
