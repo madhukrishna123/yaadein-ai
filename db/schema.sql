@@ -35,10 +35,13 @@ create table if not exists payments (
   amount_inr integer not null,
   status text not null,
   razorpay_payment_link_id text,
+  razorpay_payment_link_url text,
   razorpay_payment_id text,
   paid_at timestamptz,
   created_at timestamptz not null default now()
 );
+
+alter table payments add column if not exists razorpay_payment_link_url text;
 
 create table if not exists messages (
   id uuid primary key default gen_random_uuid(),
@@ -66,5 +69,6 @@ create index if not exists restoration_jobs_customer_id_idx on restoration_jobs(
 create index if not exists restoration_jobs_status_idx on restoration_jobs(status);
 create index if not exists restoration_jobs_created_at_idx on restoration_jobs(created_at desc);
 create index if not exists payments_job_id_idx on payments(job_id);
+create unique index if not exists payments_job_id_unique_idx on payments(job_id);
 create index if not exists messages_customer_id_idx on messages(customer_id);
 create index if not exists events_type_idx on events(type);

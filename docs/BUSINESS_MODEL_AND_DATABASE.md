@@ -128,6 +128,13 @@ Supported providers today:
 7. Add Razorpay payment gating before HD export.
 8. Move image files to R2/S3.
 
+Current Razorpay behavior:
+
+- Payment links are created from the preview page.
+- Payment link ID, URL, amount, and status are stored in `payments`.
+- HD export returns payment required until the job is paid.
+- Until the production webhook URL is configured, use the preview page's payment refresh action to check Razorpay status.
+
 ## Schema Setup
 
 Run the SQL in `db/schema.sql` against Supabase/Postgres before setting `DATABASE_URL`.

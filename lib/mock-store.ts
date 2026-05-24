@@ -31,7 +31,21 @@ export type RestorationJob = {
   updatedAt: string;
 };
 
+export type PaymentRecord = {
+  id: string;
+  jobId: string;
+  amountInr: number;
+  status: "created" | "paid" | "failed" | "cancelled" | "expired";
+  razorpayPaymentLinkId?: string;
+  razorpayPaymentLinkUrl?: string;
+  razorpayPaymentId?: string;
+  paidAt?: string;
+  createdAt: string;
+};
+
 const now = new Date().toISOString();
+
+export const mockPayments: PaymentRecord[] = [];
 
 export const mockJobs: RestorationJob[] = [
   {

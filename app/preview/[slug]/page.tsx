@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RealBeforeAfter } from "@/components/RealBeforeAfter";
 import { getJobBySlug } from "@/lib/job-repository";
+import { getPaymentForJob } from "@/lib/payment-repository";
 
 export default async function PreviewPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -14,6 +15,9 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
 
   const afterUrl = job.watermarkedPreviewUrl || job.restoredPreviewUrl || job.restoredHdUrl;
   const isReady = Boolean(afterUrl);
+  const payment = await getPaymentForJob(job.id);
+  const isPaid = payment?.status === "paid" || ["paid", "hd_ready", "delivered"].includes(job.status);
+  const isHdReady = Boolean(job.restoredHdUrl);
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -31,25 +35,58 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               {isReady ? "Your restored memory is waiting." : "Your memory is being prepared."}
             </h1>
             <p className="mt-4 leading-7 text-[#cdbfab]">
-              {isReady
-                ? "This free preview includes a Yaadein AI watermark. Unlock HD to receive the clean image on WhatsApp."
-                : "Refresh this page after restoration completes to see the watermarked preview."}
+              {isHdReady
+                ? "Your clean HD restoration is ready. Save it now or share this page with family."
+                : isPaid
+                  ? "Payment is complete. Generate the watermark-free HD restoration when you are ready."
+                  : isReady
+                    ? "This free preview includes a Yaadein AI watermark. Unlock HD to receive the clean image."
+                    : "Refresh this page after restoration completes to see the watermarked preview."}
             </p>
             <div className="mt-6 rounded-[8px] border border-white/10 bg-black/20 p-4 text-sm text-[#d8cbb9]">
               Restoration ID: <span className="text-heirloom">{job.id}</span>
               <br />
               Status: <span className="text-heirloom">{job.status}</span>
+              <br />
+              Payment: <span className="text-heirloom">{isPaid ? "paid" : payment?.status ?? "not started"}</span>
             </div>
-            <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink">
-              <BadgeIndianRupee size={18} /> Unlock HD for INR {job.priceInr}
-            </button>
+            {isHdReady && job.restoredHdUrl ? (
+              <a
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink"
+                href={job.restoredHdUrl}
+              >
+                <Download size={18} /> Open HD photo
+              </a>
+            ) : isPaid ? (
+              <form action={`/api/jobs/${job.id}/export-hd`} method="post">
+                <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink" type="submit">
+                  <Download size={18} /> Generate HD export
+                </button>
+              </form>
+            ) : (
+              <form action={`/api/jobs/${job.id}/payment-link`} method="post">
+                <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink" type="submit">
+                  <BadgeIndianRupee size={18} /> Unlock HD for INR {job.priceInr}
+                </button>
+              </form>
+            )}
+            {!isPaid && payment?.razorpayPaymentLinkId ? (
+              <form action={`/api/jobs/${job.id}/payment-refresh`} method="post">
+                <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-[8px] border border-heirloom/35 bg-heirloom/10 px-4 py-3 text-sm font-semibold text-heirloom" type="submit">
+                  I have paid, refresh status
+                </button>
+              </form>
+            ) : null}
             <div className="mt-3 grid grid-cols-2 gap-3">
               <button className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm">
                 <Share2 size={16} /> Share
               </button>
-              <button className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm">
+              <a
+                className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm"
+                href={job.restoredHdUrl ?? afterUrl ?? "#"}
+              >
                 <Download size={16} /> Save
-              </button>
+              </a>
             </div>
           </aside>
         </div>

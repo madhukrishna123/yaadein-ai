@@ -85,7 +85,9 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com npm run server:check
 6. Test one low-quality preview only.
 7. Check OpenAI usage cost.
 8. Open `/admin/login` and confirm the admin page requires the password.
-9. Only then enable marketing traffic.
+9. Create one Razorpay test payment link from a preview page.
+10. Add the production webhook URL in Razorpay once the domain is live.
+11. Only then enable marketing traffic.
 
 ## Production Blockers Before Real Users
 

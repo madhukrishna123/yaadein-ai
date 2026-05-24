@@ -55,6 +55,11 @@
   - `/admin` now requires operator login
   - `/api/admin/jobs` and retry routes require the admin cookie
   - Logout route added for the operations dashboard
+- Razorpay payment link flow added:
+  - Preview pages can create/reuse Razorpay payment links
+  - Payment records are stored against restoration jobs
+  - HD export is blocked until payment is marked paid
+  - Manual payment status refresh is available until webhooks are live
 
 ## Local URL
 
@@ -72,7 +77,7 @@
 
 ## Next Build Steps
 
-1. Add Razorpay payment link and webhook verification.
+1. Add public Razorpay webhook URL and production webhook secret.
 2. Connect WhatsApp Business Cloud API.
 3. Add production Supabase/Postgres connection.
 4. Add production deployment environment.
