@@ -18,6 +18,8 @@ export async function createRazorpayPaymentLink(input: {
   baseUrl: string;
 }) {
   const amountInr = input.job.priceInr;
+  const customerContact = safeRazorpayContact(input.job.customerPhone);
+  const customer = customerContact ? { contact: customerContact } : undefined;
   const response = await razorpayRequest<RazorpayPaymentLink>("/payment_links", {
     method: "POST",
     body: JSON.stringify({
@@ -25,11 +27,9 @@ export async function createRazorpayPaymentLink(input: {
       currency: "INR",
       accept_partial: false,
       description: `Yaadein AI HD restore ${input.job.id}`,
-      customer: {
-        contact: input.job.customerPhone !== "unknown" ? input.job.customerPhone : undefined
-      },
+      customer,
       notify: {
-        sms: true,
+        sms: Boolean(customerContact),
         email: false
       },
       reminder_enable: true,
@@ -71,6 +71,17 @@ function normalizeRazorpayPaymentStatus(status: string): PaymentStatus {
   if (status === "cancelled") return "cancelled";
   if (status === "expired") return "expired";
   return "created";
+}
+
+function safeRazorpayContact(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length < 10) return undefined;
+
+  const nationalNumber = digits.slice(-10);
+  const hasRepeatingDigits = /(.)\1{5,}/.test(nationalNumber);
+  if (hasRepeatingDigits) return undefined;
+
+  return digits;
 }
 
 async function razorpayRequest<T>(path: string, init: RequestInit) {
