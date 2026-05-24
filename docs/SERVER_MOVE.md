@@ -34,8 +34,8 @@ Use a separate worker host later only when background queues are added.
 Set these in the hosting dashboard:
 
 ```env
-NEXT_PUBLIC_APP_URL=
-NEXT_PUBLIC_WHATSAPP_NUMBER=
+NEXT_PUBLIC_APP_URL=https://yaadein-ai.nestrift.com
+NEXT_PUBLIC_WHATSAPP_NUMBER=919885711673
 ADMIN_PASSWORD=
 ADMIN_SESSION_SECRET=
 
@@ -79,7 +79,7 @@ Do not commit `.env.local`.
 5. Run smoke checks:
 
 ```bash
-NEXT_PUBLIC_APP_URL=https://your-domain.com npm run server:check
+NEXT_PUBLIC_APP_URL=https://yaadein-ai.nestrift.com npm run server:check
 ```
 
 6. Test one low-quality preview only.
