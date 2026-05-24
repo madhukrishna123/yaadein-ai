@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAdminLoginResponse, hasAdminPassword, isSafeAdminNextPath } from "@/lib/admin-auth";
+import { createAdminLoginResponse, hasAdminPassword, isSafeAdminNextPath, requestOrigin } from "@/lib/admin-auth";
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -8,12 +8,12 @@ export async function POST(request: Request) {
   const nextPath = isSafeAdminNextPath(requestedNextPath) ? requestedNextPath : "/admin";
 
   if (!hasAdminPassword()) {
-    return NextResponse.redirect(new URL("/admin/login?setup=1", request.url));
+    return NextResponse.redirect(new URL("/admin/login?setup=1", requestOrigin(request)));
   }
 
   if (password !== process.env.ADMIN_PASSWORD) {
-    return NextResponse.redirect(new URL(`/admin/login?error=1&next=${encodeURIComponent(nextPath)}`, request.url));
+    return NextResponse.redirect(new URL(`/admin/login?error=1&next=${encodeURIComponent(nextPath)}`, requestOrigin(request)));
   }
 
-  return createAdminLoginResponse(nextPath, request.url);
+  return createAdminLoginResponse(nextPath, requestOrigin(request));
 }

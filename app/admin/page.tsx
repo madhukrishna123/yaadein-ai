@@ -16,7 +16,6 @@ import { jobStates } from "@/lib/yaadein-data";
 
 type AdminJob = {
   id: string;
-  customerPhone: string;
   status: string;
   priceInr: number;
   processingMode?: string;
@@ -105,13 +104,13 @@ export default async function AdminPage() {
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.62fr]">
           <section className="glass-panel rounded-[8px] p-5">
-            <h2 className="text-xl font-semibold">Recent jobs</h2>
+            <h2 className="text-xl font-semibold">Recent restoration jobs</h2>
             <div className="mt-5 space-y-3">
               {data.jobs.map((job) => (
                 <div className="flex items-center justify-between rounded-[8px] border border-white/10 bg-white/[0.04] p-4" key={job.id}>
                   <div>
                     <p className="font-semibold">{job.id}</p>
-                    <p className="text-sm text-[#b9ac9a]">{maskPhone(job.customerPhone)}</p>
+                    <p className="text-sm text-[#b9ac9a]">{formatDate(job.createdAt)}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-heirloom">{job.status}</p>
@@ -141,8 +140,10 @@ export default async function AdminPage() {
   );
 }
 
-function maskPhone(phone: string) {
-  if (!phone || phone === "unknown") return "unknown";
-  const last = phone.slice(-3);
-  return `${phone.slice(0, 3)} *** *** ${last}`;
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata"
+  }).format(new Date(value));
 }

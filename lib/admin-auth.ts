@@ -65,6 +65,14 @@ export function isSafeAdminNextPath(value: string | null) {
   return Boolean(value && value.startsWith("/") && !value.startsWith("//"));
 }
 
+export function requestOrigin(request: Request) {
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const proto = request.headers.get("x-forwarded-proto") ?? "http";
+
+  if (host) return `${proto}://${host}`;
+  return request.url;
+}
+
 function isValidAdminToken(token?: string) {
   if (!token || !hasAdminPassword()) return false;
 

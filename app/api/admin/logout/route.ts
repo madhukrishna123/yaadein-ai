@@ -1,5 +1,5 @@
-import { createAdminLogoutResponse } from "@/lib/admin-auth";
+import { createAdminLogoutResponse, requestOrigin } from "@/lib/admin-auth";
 
 export async function POST(request: Request) {
-  return createAdminLogoutResponse(request.url);
+  return createAdminLogoutResponse(requestOrigin(request));
 }
