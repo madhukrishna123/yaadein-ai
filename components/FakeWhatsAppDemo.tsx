@@ -123,7 +123,7 @@ export function FakeWhatsAppDemo() {
         {state === "ready" ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
             <ChatBubble side="left">
-              <span className="block">Your free preview is ready. Unlock the HD photo without watermark for INR 199.</span>
+              <span className="block">Your free preview is ready. Launch offer: unlock 3 HD photos for INR 149.</span>
               {previewUrl ? (
                 <a className="mt-3 inline-flex text-heirloom underline" href={previewUrl}>
                   Open preview

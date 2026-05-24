@@ -32,19 +32,19 @@ export const loadingStates = [
 
 export const pricingPlans = [
   {
-    name: "Single Restore",
-    price: "INR 199",
-    description: "Restore 1 old photo in HD. Includes free watermarked preview before payment."
+    name: "Launch Offer",
+    price: "INR 149",
+    description: "Restore up to 3 old photos in HD. Includes free watermarked previews before payment."
   },
   {
-    name: "Family Pack",
+    name: "Single Memory",
+    price: "INR 99",
+    description: "Restore 1 old photo in HD. Best when you want to test one precious memory first."
+  },
+  {
+    name: "Family Archive",
     price: "INR 499",
-    description: "Restore 3 photos. Best for childhood, parents, grandparents, and old album memories."
-  },
-  {
-    name: "Archive Pack",
-    price: "INR 1299",
-    description: "Restore a small family set. Best for weddings, anniversaries, memorials, and gifting."
+    description: "Restore 10 photos for a family album, wedding set, anniversary, or gifting moment."
   }
 ];
 

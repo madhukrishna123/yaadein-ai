@@ -7,6 +7,7 @@ import {
   Heart,
   ImageUp,
   MessageCircle,
+  RefreshCw,
   ShieldCheck,
   Sparkles
 } from "lucide-react";
@@ -20,7 +21,7 @@ const restorationFeatures = [
   "Scratch and dust cleanup",
   "Natural face sharpening",
   "Faded color recovery",
-  "HD export after approval"
+  "3 HD photos for INR 149"
 ];
 
 const useCases = [
@@ -47,12 +48,17 @@ const promiseCards = [
   {
     icon: Heart,
     title: "Preview before paying",
-    text: "See a watermarked result first. Unlock HD only when the memory feels worth keeping."
+    text: "See watermarked previews first. Unlock HD only when the memories feel worth keeping."
+  },
+  {
+    icon: RefreshCw,
+    title: "Two careful retries",
+    text: "If a restoration misses the mark, we retry up to two times per photo before support review."
   },
   {
     icon: Clock3,
-    title: "Fast restoration flow",
-    text: "Upload, restore, preview, unlock. The journey is built for mobile and WhatsApp sharing."
+    title: "Fast mobile flow",
+    text: "Upload, preview, pay, download. The journey is built for mobile and WhatsApp sharing."
   }
 ];
 
@@ -91,6 +97,10 @@ export default function Home() {
               Yaadein AI restores damaged, faded, and blurry memories into beautiful HD photos while preserving identity,
               expression, clothing, and the original feeling of the moment.
             </p>
+            <div className="mt-6 inline-flex flex-wrap items-center gap-3 rounded-[8px] border border-heirloom/25 bg-heirloom/10 px-4 py-3 text-sm text-[#f5e6c7]">
+              <BadgeIndianRupee size={18} />
+              Launch offer: <span className="font-semibold text-heirloom">3 HD restorations for INR 149</span>
+            </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
                 className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink transition hover:bg-[#efcf83]"
@@ -145,7 +155,7 @@ export default function Home() {
         </div>
       </Section>
 
-      <Section eyebrow="Pricing" id="pricing" title="Simple pricing after the preview feels right">
+      <Section eyebrow="Pricing" id="pricing" title="Launch pricing after the preview feels right">
         <div className="grid gap-4 md:grid-cols-3">
           {pricingPlans.map((plan) => (
             <div className="glass-panel rounded-[8px] p-6" key={plan.name}>
@@ -161,9 +171,14 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <p className="mt-5 flex items-center gap-2 text-sm text-[#b9ac9a]">
-          <Download size={16} /> Free preview first. HD export unlocks after payment.
-        </p>
+        <div className="mt-5 grid gap-3 text-sm text-[#b9ac9a] md:grid-cols-2">
+          <p className="flex items-center gap-2">
+            <Download size={16} /> Free preview first. HD export unlocks after payment.
+          </p>
+          <p className="flex items-center gap-2">
+            <RefreshCw size={16} /> Up to 2 AI retries per photo if the first result is not good enough.
+          </p>
+        </div>
       </Section>
 
       <section className="px-5 py-16 sm:px-8 lg:px-12">
@@ -173,7 +188,7 @@ export default function Home() {
             Your memories deserve HD.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl leading-7 text-[#d8cbb9]">
-            Start with one photo. If the preview feels right, unlock the clean HD version and share it with family.
+            Start with up to 3 photos. If the previews feel right, unlock the clean HD versions and share them with family.
           </p>
           <a
             className="mt-7 inline-flex items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink transition hover:bg-[#efcf83]"
