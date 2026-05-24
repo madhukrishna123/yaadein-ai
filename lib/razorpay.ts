@@ -48,7 +48,7 @@ export async function createRazorpayPaymentLink(input: {
 
   return {
     id: response.id,
-    url: normalizeRazorpayShortUrl(response.short_url),
+    url: hostedRazorpayPaymentLinkUrl(response.id),
     status: normalizeRazorpayPaymentStatus(response.status)
   };
 }
@@ -60,14 +60,15 @@ export async function getRazorpayPaymentLink(paymentLinkId: string) {
 
   return {
     id: response.id,
-    url: response.short_url ? normalizeRazorpayShortUrl(response.short_url) : undefined,
+    url: hostedRazorpayPaymentLinkUrl(response.id),
     status: normalizeRazorpayPaymentStatus(response.status),
     paymentId: response.payments?.find((payment) => payment.payment_id)?.payment_id
   };
 }
 
-function normalizeRazorpayShortUrl(url: string) {
-  return url.replace("https://rzp.io/rzp/", "https://rzp.io/i/");
+function hostedRazorpayPaymentLinkUrl(paymentLinkId: string) {
+  const suffix = process.env.RAZORPAY_KEY_ID?.startsWith("rzp_test_") ? "/test" : "";
+  return `https://razorpay.com/payment-link/${paymentLinkId}${suffix}`;
 }
 
 function normalizeRazorpayPaymentStatus(status: string): PaymentStatus {
