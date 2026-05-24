@@ -22,7 +22,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
 
   const customer = await getCustomerByPhone(job.customerPhone);
   const freePreviewLimit = Number(process.env.FREE_PREVIEW_LIMIT_PER_PHONE ?? 1);
-  if (customer && customer.freePreviewCount >= freePreviewLimit && job.status !== "preview_ready") {
+  const shouldEnforceFreePreviewLimit = !isLocalDevelopmentTestPhone(job.customerPhone);
+  if (shouldEnforceFreePreviewLimit && customer && customer.freePreviewCount >= freePreviewLimit && job.status !== "preview_ready") {
     const updated = await updateJob(jobId, { status: "awaiting_payment" });
     return NextResponse.json(
       {
@@ -52,7 +53,9 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
       watermarkedPreviewUrl: result.watermarkedUrl,
       previewCostUsd: result.estimatedCostUsd
     });
-    await incrementFreePreviewCount(job.customerPhone);
+    if (shouldEnforceFreePreviewLimit) {
+      await incrementFreePreviewCount(job.customerPhone);
+    }
 
     return NextResponse.json({
       job: updated,
@@ -68,4 +71,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
 
     return NextResponse.json({ error: message, job: updated }, { status: 500 });
   }
+}
+
+function isLocalDevelopmentTestPhone(phone: string) {
+  return process.env.NODE_ENV !== "production" && phone === "+919999999999";
 }
