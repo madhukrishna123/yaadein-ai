@@ -12,7 +12,7 @@ export function FakeWhatsAppDemo() {
   const [fileName, setFileName] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [error, setError] = useState("");
-  const [phone, setPhone] = useState("+919885711673");
+  const [phone, setPhone] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState(defaultPricingPlanId);
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
   const selectedPlan = getPricingPlan(selectedPlanId);
@@ -96,7 +96,7 @@ export function FakeWhatsAppDemo() {
             disabled={state === "processing"}
             inputMode="tel"
             onChange={(event) => setPhone(event.target.value)}
-            placeholder="+91 98857 11673"
+            placeholder="+91 WhatsApp number"
             type="tel"
             value={phone}
           />

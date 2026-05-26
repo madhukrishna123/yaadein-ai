@@ -9,8 +9,12 @@ export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
   const formData = await request.formData().catch(() => null);
   const file = formData?.get("photo");
-  const phone = String(formData?.get("phone") ?? "+919999999999");
+  const phone = normalizePhone(String(formData?.get("phone") ?? ""));
   const plan = getPricingPlan(String(formData?.get("planId") ?? ""));
+
+  if (!phone) {
+    return NextResponse.json({ error: "WhatsApp phone number is required." }, { status: 400 });
+  }
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "Photo file is required." }, { status: 400 });
@@ -41,4 +45,11 @@ export async function POST(request: NextRequest) {
       status: `/api/jobs/${job.id}`
     }
   });
+}
+
+function normalizePhone(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 10) return `+91${digits}`;
+  if (digits.length >= 11 && digits.length <= 15) return `+${digits}`;
+  return "";
 }
