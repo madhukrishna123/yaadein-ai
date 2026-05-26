@@ -20,7 +20,7 @@ create table if not exists restoration_jobs (
   restored_hd_url text,
   restored_hd_path text,
   share_page_slug text not null unique,
-  price_inr integer not null default 199,
+  price_inr integer not null default 149,
   preview_cost_usd numeric(10, 4),
   hd_cost_usd numeric(10, 4),
   processing_mode text,

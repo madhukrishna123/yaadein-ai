@@ -9,7 +9,7 @@ The first real image test cost about `$0.11`, around INR 9-10. That can work for
 - One free AI preview per WhatsApp phone number.
 - Preview uses low-cost settings.
 - HD export uses high-quality settings only after payment.
-- Single HD restore test price: INR 199.
+- Launch offer: INR 149 for up to 3 photos.
 - Three-photo pack: INR 499.
 - Family pack: INR 1299.
 
@@ -148,7 +148,7 @@ Production rule:
 
 - Protect `/admin` and `/api/admin/*` with `ADMIN_PASSWORD`.
 - Set `FREE_PREVIEW_LIMIT_PER_PHONE=1`.
-- Set `PRICE_SINGLE_RESTORE_INR=199`.
+- Set `PRICE_SINGLE_RESTORE_INR=149`.
 - Keep `OPENAI_IMAGE_PREVIEW_QUALITY=low`.
 
 Local setup commands:

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createJob } from "@/lib/job-repository";
 import { isSupportedImage, saveUploadedImage } from "@/lib/local-storage";
 import { createJobId } from "@/lib/mock-store";
+import { getPricingPlan } from "@/lib/yaadein-data";
 
 export const runtime = "nodejs";
 
@@ -9,6 +10,7 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData().catch(() => null);
   const file = formData?.get("photo");
   const phone = String(formData?.get("phone") ?? "+919999999999");
+  const plan = getPricingPlan(String(formData?.get("planId") ?? ""));
 
   if (!(file instanceof File)) {
     return NextResponse.json({ error: "Photo file is required." }, { status: 400 });
@@ -28,7 +30,8 @@ export async function POST(request: NextRequest) {
     id: jobId,
     customerPhone: phone,
     sourceImagePath: stored.absolutePath,
-    sourceImageUrl: stored.publicUrl
+    sourceImageUrl: stored.publicUrl,
+    priceInr: plan.priceInr
   });
 
   return NextResponse.json({

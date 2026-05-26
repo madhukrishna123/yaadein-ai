@@ -32,21 +32,33 @@ export const loadingStates = [
 
 export const pricingPlans = [
   {
+    id: "launch-3",
     name: "Launch Offer",
     price: "INR 149",
+    priceInr: 149,
     description: "Restore up to 3 old photos in HD. Includes free watermarked previews before payment."
   },
   {
+    id: "single",
     name: "Single Memory",
     price: "INR 99",
+    priceInr: 99,
     description: "Restore 1 old photo in HD. Best when you want to test one precious memory first."
   },
   {
+    id: "family-10",
     name: "Family Archive",
     price: "INR 499",
+    priceInr: 499,
     description: "Restore 10 photos for a family album, wedding set, anniversary, or gifting moment."
   }
 ];
+
+export const defaultPricingPlanId = "launch-3";
+
+export function getPricingPlan(planId: string | null | undefined) {
+  return pricingPlans.find((plan) => plan.id === planId) ?? pricingPlans.find((plan) => plan.id === defaultPricingPlanId) ?? pricingPlans[0];
+}
 
 export const adminMetrics = [
   { label: "WhatsApp chat starts", value: "184", icon: MessageCircle },

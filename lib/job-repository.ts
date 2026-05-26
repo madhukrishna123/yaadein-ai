@@ -127,7 +127,7 @@ export async function createJob(input: {
       input.sourceImageUrl,
       input.sourceImagePath ?? null,
       input.id.toLowerCase(),
-      input.priceInr ?? Number(process.env.PRICE_SINGLE_RESTORE_INR ?? 199)
+      input.priceInr ?? Number(process.env.PRICE_SINGLE_RESTORE_INR ?? 149)
     ]
   );
 
@@ -269,7 +269,9 @@ function summarizeJobs(jobs: RestorationJob[], storageMode: "database" | "memory
     paid,
     failed: jobs.filter((job) => job.status === "failed").length,
     manualReview: jobs.filter((job) => job.status === "manual_review").length,
-    revenueInr: paid * 199,
+    revenueInr: jobs
+      .filter((job) => ["paid", "hd_ready", "delivered"].includes(job.status))
+      .reduce((total, job) => total + job.priceInr, 0),
     previewCostUsd: sumCost(jobs, "previewCostUsd"),
     hdCostUsd: sumCost(jobs, "hdCostUsd"),
     conversionRate: totalJobs > 0 ? Math.round((paid / totalJobs) * 100) : 0,

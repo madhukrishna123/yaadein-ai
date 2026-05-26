@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ImageUp, Loader2, MessageCircle, Send } from "lucide-react";
 import { useMemo, useState } from "react";
-import { loadingStates } from "@/lib/yaadein-data";
+import { defaultPricingPlanId, getPricingPlan, loadingStates, pricingPlans } from "@/lib/yaadein-data";
 
 type DemoState = "idle" | "uploaded" | "processing" | "ready";
 
@@ -12,7 +12,9 @@ export function FakeWhatsAppDemo() {
   const [fileName, setFileName] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [error, setError] = useState("");
+  const [selectedPlanId, setSelectedPlanId] = useState(defaultPricingPlanId);
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
+  const selectedPlan = getPricingPlan(selectedPlanId);
 
   async function handleFile(file?: File) {
     if (!file) return;
@@ -25,6 +27,7 @@ export function FakeWhatsAppDemo() {
     try {
       const formData = new FormData();
       formData.append("phone", "+919999999999");
+      formData.append("planId", selectedPlan.id);
       formData.append("photo", file);
 
       const uploadResponse = await fetch("/api/restoration/upload", {
@@ -79,6 +82,27 @@ export function FakeWhatsAppDemo() {
         <ChatBubble side="left">Upload one old photo. We will create a free watermarked restoration preview.</ChatBubble>
         <ChatBubble side="left">Scanned photos and clear phone pictures both work. Avoid glare for best results.</ChatBubble>
 
+        <div className="grid gap-2">
+          {pricingPlans.map((plan) => (
+            <button
+              className={`rounded-[8px] border px-3 py-2 text-left text-sm transition ${
+                selectedPlanId === plan.id
+                  ? "border-heirloom/70 bg-heirloom/15 text-[#fff7ea]"
+                  : "border-white/10 bg-white/[0.04] text-[#cdbfab] hover:border-heirloom/40"
+              }`}
+              disabled={state === "processing"}
+              key={plan.id}
+              onClick={() => setSelectedPlanId(plan.id)}
+              type="button"
+            >
+              <span className="flex items-center justify-between gap-3">
+                <span>{plan.name}</span>
+                <span className="font-semibold text-heirloom">{plan.price}</span>
+              </span>
+            </button>
+          ))}
+        </div>
+
         {fileName ? (
           <ChatBubble side="right">
             <span className="flex items-center gap-2">
@@ -123,7 +147,7 @@ export function FakeWhatsAppDemo() {
         {state === "ready" ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
             <ChatBubble side="left">
-              <span className="block">Your free preview is ready. Launch offer: unlock 3 HD photos for INR 149.</span>
+              <span className="block">Your free preview is ready. Unlock {selectedPlan.name.toLowerCase()} for {selectedPlan.price}.</span>
               {previewUrl ? (
                 <a className="mt-3 inline-flex text-heirloom underline" href={previewUrl}>
                   Open preview
