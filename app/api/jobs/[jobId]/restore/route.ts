@@ -27,9 +27,10 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
     const updated = await updateJob(jobId, { status: "awaiting_payment" });
     return NextResponse.json(
       {
-        error: "Free preview limit reached. Payment is required for another AI preview.",
+        error: "Free preview limit reached for this WhatsApp number. Unlock this restore to continue.",
         job: updated,
-        paymentRequired: true
+        paymentRequired: true,
+        previewPage: `/preview/${job.sharePageSlug}`
       },
       { status: 402 }
     );

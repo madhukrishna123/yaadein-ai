@@ -18,6 +18,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
   const isHdReady = Boolean(job.restoredHdUrl);
   const afterUrl = isHdReady && job.restoredHdUrl ? job.restoredHdUrl : job.watermarkedPreviewUrl;
   const isReady = Boolean(afterUrl);
+  const needsPaymentBeforePreview = job.status === "awaiting_payment" && !isReady && !isPaid;
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -29,17 +30,19 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
           <RealBeforeAfter beforeUrl={job.sourceImageUrl} afterUrl={afterUrl} />
           <aside className="glass-panel rounded-[8px] p-6">
             <p className="text-sm uppercase tracking-[0.22em] text-heirloom">
-              {isReady ? "Preview ready" : "Preview pending"}
+              {needsPaymentBeforePreview ? "Unlock required" : isReady ? "Preview ready" : "Preview pending"}
             </p>
             <h1 className="mt-4 text-3xl font-semibold">
-              {isReady ? "Your restored memory is waiting." : "Your memory is being prepared."}
+              {needsPaymentBeforePreview ? "Unlock this restore to continue." : isReady ? "Your restored memory is waiting." : "Your memory is being prepared."}
             </h1>
             <p className="mt-4 leading-7 text-[#cdbfab]">
               {isHdReady
                 ? "Your clean HD restoration is ready. Save it now or share this page with family."
                 : isPaid
                   ? "Payment is complete. Generate the watermark-free HD restoration when you are ready."
-                  : isReady
+                  : needsPaymentBeforePreview
+                    ? "This WhatsApp number has already used its free AI preview. Unlock this restore to generate the paid HD result."
+                    : isReady
                     ? "This free preview includes a Yaadein AI watermark. Unlock HD to receive the clean image."
                     : "Refresh this page after restoration completes to see the watermarked preview."}
             </p>

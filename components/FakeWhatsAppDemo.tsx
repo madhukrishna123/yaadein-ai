@@ -62,6 +62,7 @@ export function FakeWhatsAppDemo() {
       const uploadData = (await uploadResponse.json()) as {
         job: { id: string; sharePageSlug: string };
       };
+      const nextPreviewUrl = `/preview/${uploadData.job.sharePageSlug}`;
 
       setState("processing");
 
@@ -71,10 +72,16 @@ export function FakeWhatsAppDemo() {
 
       if (!restoreResponse.ok) {
         const restoreError = await restoreResponse.json().catch(() => null);
+        if (restoreResponse.status === 402 && restoreError?.paymentRequired) {
+          setPreviewUrl(nextPreviewUrl);
+          setState("ready");
+          setError("Free preview limit reached for this WhatsApp number. Unlock this restore to continue.");
+          return;
+        }
         throw new Error(restoreError?.error ?? "Restoration failed.");
       }
 
-      setPreviewUrl(`/preview/${uploadData.job.sharePageSlug}`);
+      setPreviewUrl(nextPreviewUrl);
       setState("ready");
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Something went wrong while restoring this photo.");
