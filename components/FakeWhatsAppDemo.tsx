@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ImageUp, Loader2, MessageCircle, Send } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   defaultPricingPlanId,
   defaultRestorationStyleId,
@@ -21,18 +21,19 @@ export function FakeWhatsAppDemo() {
   const [previewUrl, setPreviewUrl] = useState("");
   const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
+  const phoneInputRef = useRef<HTMLInputElement>(null);
   const [selectedPlanId, setSelectedPlanId] = useState(defaultPricingPlanId);
   const [selectedStyleId, setSelectedStyleId] = useState(defaultRestorationStyleId);
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
   const selectedPlan = getPricingPlan(selectedPlanId);
   const selectedStyle = getRestorationStyle(selectedStyleId);
-  const normalizedPhone = normalizePhone(phone);
 
   async function handleFile(file?: File) {
     if (!file) return;
 
+    const normalizedPhone = normalizePhone(phoneInputRef.current?.value ?? phone);
     if (!normalizedPhone) {
-      setError("Enter a WhatsApp number before uploading.");
+      setError("Enter a valid WhatsApp number before uploading.");
       return;
     }
 
@@ -106,8 +107,12 @@ export function FakeWhatsAppDemo() {
             className="w-full rounded-[8px] border border-white/12 bg-ink/50 px-3 py-2 text-[#fff7ea] outline-none transition placeholder:text-[#8b7e6c] focus:border-heirloom/70"
             disabled={state === "processing"}
             inputMode="tel"
-            onChange={(event) => setPhone(event.target.value)}
+            onChange={(event) => {
+              setPhone(event.target.value);
+              setError("");
+            }}
             placeholder="+91 WhatsApp number"
+            ref={phoneInputRef}
             type="tel"
             value={phone}
           />
@@ -235,7 +240,8 @@ function normalizePhone(value: string) {
   const digits = value.replace(/\D/g, "");
   if (!digits) return "";
   if (digits.length === 10) return `+91${digits}`;
-  return `+${digits}`;
+  if (digits.length >= 11 && digits.length <= 15) return `+${digits}`;
+  return "";
 }
 
 function ChatBubble({ side, children }: { side: "left" | "right"; children: React.ReactNode }) {
