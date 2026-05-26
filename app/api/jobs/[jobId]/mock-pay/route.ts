@@ -31,7 +31,8 @@ export async function POST(_request: Request, { params }: { params: Promise<{ jo
   const result = await restorePhotoForJob({
     jobId: existing.id,
     sourceImagePath: existing.sourceImagePath,
-    mode: "hd"
+    mode: "hd",
+    style: existing.restorationStyle
   });
 
   const job = updateMockJob(jobId, {

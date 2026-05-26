@@ -1,6 +1,6 @@
 import { restoreWithLocalProvider } from "@/lib/restoration-local-provider";
 import { hasOpenAIImageConfig, restoreWithOpenAIProvider } from "@/lib/restoration-openai-provider";
-import { RestorationMode, RestorationProvider, RestorationProviderResult } from "@/lib/restoration-types";
+import { RestorationMode, RestorationProvider, RestorationProviderResult, RestorationStyle } from "@/lib/restoration-types";
 
 export function providerForMode(mode: RestorationMode): RestorationProvider {
   const defaultProvider = mode === "hd" ? "openai" : "local";
@@ -16,7 +16,11 @@ export function providerForMode(mode: RestorationMode): RestorationProvider {
   return defaultProvider;
 }
 
-export async function runRestorationProvider(sourceImagePath: string, mode: RestorationMode): Promise<RestorationProviderResult> {
+export async function runRestorationProvider(
+  sourceImagePath: string,
+  mode: RestorationMode,
+  style: RestorationStyle
+): Promise<RestorationProviderResult> {
   const provider = providerForMode(mode);
 
   if (provider === "local") {
@@ -31,7 +35,7 @@ export async function runRestorationProvider(sourceImagePath: string, mode: Rest
       return restoreWithLocalProvider(sourceImagePath, mode);
     }
 
-    return restoreWithOpenAIProvider(sourceImagePath, mode);
+    return restoreWithOpenAIProvider(sourceImagePath, mode, style);
   }
 
   throw new Error("Self-hosted restoration provider is planned but not implemented yet.");

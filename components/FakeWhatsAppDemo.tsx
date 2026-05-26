@@ -3,7 +3,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ImageUp, Loader2, MessageCircle, Send } from "lucide-react";
 import { useMemo, useState } from "react";
-import { defaultPricingPlanId, getPricingPlan, loadingStates, pricingPlans } from "@/lib/yaadein-data";
+import {
+  defaultPricingPlanId,
+  defaultRestorationStyleId,
+  getPricingPlan,
+  getRestorationStyle,
+  loadingStates,
+  pricingPlans,
+  restorationStyles
+} from "@/lib/yaadein-data";
 
 type DemoState = "idle" | "uploaded" | "processing" | "ready";
 
@@ -14,8 +22,10 @@ export function FakeWhatsAppDemo() {
   const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedPlanId, setSelectedPlanId] = useState(defaultPricingPlanId);
+  const [selectedStyleId, setSelectedStyleId] = useState(defaultRestorationStyleId);
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
   const selectedPlan = getPricingPlan(selectedPlanId);
+  const selectedStyle = getRestorationStyle(selectedStyleId);
   const normalizedPhone = normalizePhone(phone);
 
   async function handleFile(file?: File) {
@@ -35,6 +45,7 @@ export function FakeWhatsAppDemo() {
       const formData = new FormData();
       formData.append("phone", normalizedPhone);
       formData.append("planId", selectedPlan.id);
+      formData.append("restorationStyle", selectedStyle.id);
       formData.append("photo", file);
 
       const uploadResponse = await fetch("/api/restoration/upload", {
@@ -123,6 +134,25 @@ export function FakeWhatsAppDemo() {
           ))}
         </div>
 
+        <div className="grid gap-2">
+          {restorationStyles.map((style) => (
+            <button
+              className={`rounded-[8px] border px-3 py-2 text-left text-sm transition ${
+                selectedStyleId === style.id
+                  ? "border-mintglass/70 bg-mintglass/12 text-[#f7fff9]"
+                  : "border-white/10 bg-white/[0.04] text-[#cdbfab] hover:border-mintglass/40"
+              }`}
+              disabled={state === "processing"}
+              key={style.id}
+              onClick={() => setSelectedStyleId(style.id)}
+              type="button"
+            >
+              <span className="block font-semibold">{style.name}</span>
+              <span className="mt-1 block text-xs leading-5 text-[#b9ac9a]">{style.description}</span>
+            </button>
+          ))}
+        </div>
+
         {fileName ? (
           <ChatBubble side="right">
             <span className="flex items-center gap-2">
@@ -167,7 +197,9 @@ export function FakeWhatsAppDemo() {
         {state === "ready" ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
             <ChatBubble side="left">
-              <span className="block">Your free preview is ready. Unlock {selectedPlan.name.toLowerCase()} for {selectedPlan.price}.</span>
+              <span className="block">
+                Your {selectedStyle.name.toLowerCase()} preview is ready. Unlock {selectedPlan.name.toLowerCase()} for {selectedPlan.price}.
+              </span>
               {previewUrl ? (
                 <a className="mt-3 inline-flex text-heirloom underline" href={previewUrl}>
                   Open preview

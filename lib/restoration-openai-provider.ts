@@ -1,21 +1,36 @@
 import OpenAI, { toFile } from "openai";
-import { RestorationMode, RestorationProviderResult } from "@/lib/restoration-types";
+import { RestorationMode, RestorationProviderResult, RestorationStyle } from "@/lib/restoration-types";
 import { readStoredImageBuffer } from "@/lib/storage-read";
 
-const RESTORATION_PROMPT = [
+const FAITHFUL_RESTORE_PROMPT = [
   "Restore this old damaged photograph into a realistic high-definition image while preserving identity, emotions, authenticity, skin texture, clothing details, facial structure, age, expression, and historical accuracy.",
   "Remove scratches, dust, stains, noise, blur, fading, compression artifacts, and low-quality damage.",
   "Improve facial clarity, lighting, sharpness, contrast, and color balance naturally.",
-  "If the image is black and white, colorize it with historically plausible colors.",
-  "Do not beautify, modernize, alter age, change facial identity, over-smooth skin, invent unrealistic details, or make the result look artificially generated.",
-  "Preserve the original composition and emotional tone."
+  "Keep black-and-white photos black and white unless color is clearly present in the source.",
+  "Preserve the original composition, crop, pose, background, clothing, expression, face shape, and emotional tone.",
+  "Do not beautify, modernize, alter age, change facial identity, over-smooth skin, invent unrealistic details, or make the result look artificially generated."
 ].join(" ");
+
+const MEMORY_RECREATE_PROMPT = [
+  "Create a beautiful realistic high-definition AI restoration based on this old damaged photograph.",
+  "Remove scratches, dust, stains, pen marks, noise, blur, fading, compression artifacts, and low-quality damage.",
+  "Reconstruct missing details only where the original is badly damaged or unreadable, while preserving the person's likely identity, age, expression, clothing style, and historical feel.",
+  "Colorize black-and-white photos with historically plausible colors and natural lighting.",
+  "Make the result emotionally warm and shareable, but avoid a plastic, over-smoothed, cartoon, or obviously generated look.",
+  "Preserve the original portrait framing unless repair requires subtle cropping."
+].join(" ");
+
+export const RESTORATION_PROMPT = FAITHFUL_RESTORE_PROMPT;
 
 export function hasOpenAIImageConfig() {
   return Boolean(process.env.OPENAI_API_KEY);
 }
 
-export async function restoreWithOpenAIProvider(sourceImagePath: string, mode: RestorationMode): Promise<RestorationProviderResult> {
+export async function restoreWithOpenAIProvider(
+  sourceImagePath: string,
+  mode: RestorationMode,
+  style: RestorationStyle
+): Promise<RestorationProviderResult> {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   const model = process.env.OPENAI_IMAGE_MODEL ?? "gpt-image-1.5";
   const quality =
@@ -35,12 +50,12 @@ export async function restoreWithOpenAIProvider(sourceImagePath: string, mode: R
   const response = await client.images.edit({
     model,
     image: imageFile,
-    prompt: RESTORATION_PROMPT,
+    prompt: promptForStyle(style),
     quality: quality as "low" | "medium" | "high" | "auto",
     size: "auto",
     output_format: "jpeg",
     input_fidelity: inputFidelity as "low" | "high",
-    user: `yaadein-${mode}`
+    user: `yaadein-${mode}-${style}`
   });
 
   const b64 = response.data?.[0]?.b64_json;
@@ -55,7 +70,9 @@ export async function restoreWithOpenAIProvider(sourceImagePath: string, mode: R
   };
 }
 
-export { RESTORATION_PROMPT };
+function promptForStyle(style: RestorationStyle) {
+  return style === "recreate" ? MEMORY_RECREATE_PROMPT : FAITHFUL_RESTORE_PROMPT;
+}
 
 function estimateOpenAIImageCost(mode: RestorationMode) {
   const envValue = mode === "hd" ? process.env.OPENAI_HD_ESTIMATED_COST_USD : process.env.OPENAI_PREVIEW_ESTIMATED_COST_USD;

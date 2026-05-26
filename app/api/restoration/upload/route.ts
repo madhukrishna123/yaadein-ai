@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createJob } from "@/lib/job-repository";
 import { isSupportedImage, saveUploadedImage } from "@/lib/local-storage";
 import { createJobId } from "@/lib/mock-store";
-import { getPricingPlan } from "@/lib/yaadein-data";
+import { getPricingPlan, getRestorationStyle } from "@/lib/yaadein-data";
 
 export const runtime = "nodejs";
 
@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
   const file = formData?.get("photo");
   const phone = normalizePhone(String(formData?.get("phone") ?? ""));
   const plan = getPricingPlan(String(formData?.get("planId") ?? ""));
+  const restorationStyle = getRestorationStyle(String(formData?.get("restorationStyle") ?? ""));
 
   if (!phone) {
     return NextResponse.json({ error: "WhatsApp phone number is required." }, { status: 400 });
@@ -35,7 +36,8 @@ export async function POST(request: NextRequest) {
     customerPhone: phone,
     sourceImagePath: stored.absolutePath,
     sourceImageUrl: stored.publicUrl,
-    priceInr: plan.priceInr
+    priceInr: plan.priceInr,
+    restorationStyle: restorationStyle.id
   });
 
   return NextResponse.json({

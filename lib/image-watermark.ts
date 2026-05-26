@@ -41,6 +41,62 @@ export async function normalizeHdExport(inputBuffer: Buffer) {
     .toBuffer();
 }
 
+export async function createBeforeAfterShareImage(beforeBuffer: Buffer, afterBuffer: Buffer) {
+  const width = 1600;
+  const height = 1200;
+  const panelWidth = width / 2;
+  const labelFont = 38;
+  const brandFont = 34;
+  const before = await sharp(beforeBuffer)
+    .rotate()
+    .resize({ width: panelWidth, height, fit: "cover", position: "attention" })
+    .jpeg({ quality: 92 })
+    .toBuffer();
+  const after = await sharp(afterBuffer)
+    .rotate()
+    .resize({ width: panelWidth, height, fit: "cover", position: "attention" })
+    .jpeg({ quality: 92 })
+    .toBuffer();
+
+  const overlay = Buffer.from(`
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bottom" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+          <stop offset="1" stop-color="#000000" stop-opacity="0.58"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="none"/>
+      <rect x="0" y="${height - 210}" width="${width}" height="210" fill="url(#bottom)"/>
+      <line x1="${panelWidth}" y1="0" x2="${panelWidth}" y2="${height}" stroke="#f4d27d" stroke-width="6"/>
+      <g font-family="Arial, Helvetica, sans-serif" font-weight="700">
+        <rect x="44" y="42" rx="18" ry="18" width="150" height="62" fill="#080706" opacity="0.72"/>
+        <text x="72" y="84" font-size="${labelFont}" fill="#fff7ea">Before</text>
+        <rect x="${panelWidth + 44}" y="42" rx="18" ry="18" width="170" height="62" fill="#080706" opacity="0.72"/>
+        <text x="${panelWidth + 72}" y="84" font-size="${labelFont}" fill="#fff7ea">Restored</text>
+        <text x="52" y="${height - 68}" font-size="${brandFont}" fill="#f4d27d">Yaadein AI</text>
+        <text x="52" y="${height - 28}" font-size="24" fill="#fff7ea">Restored memories worth sharing</text>
+      </g>
+    </svg>
+  `);
+
+  return sharp({
+    create: {
+      width,
+      height,
+      channels: 3,
+      background: "#080706"
+    }
+  })
+    .composite([
+      { input: before, left: 0, top: 0 },
+      { input: after, left: panelWidth, top: 0 },
+      { input: overlay, left: 0, top: 0 }
+    ])
+    .jpeg({ quality: 92 })
+    .toBuffer();
+}
+
 export async function createMockRestoration(inputBuffer: Buffer, mode: "preview" | "hd") {
   const width = mode === "hd" ? 2400 : 1400;
 

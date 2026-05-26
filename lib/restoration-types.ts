@@ -1,5 +1,7 @@
 export type RestorationMode = "preview" | "hd";
 
+export type RestorationStyle = "faithful" | "recreate";
+
 export type RestorationProvider = "local" | "openai" | "future-self-hosted";
 
 export type RestorationProviderResult = {
@@ -14,5 +16,7 @@ export type RestorationResult = {
   restoredUrl: string;
   watermarkedPath?: string;
   watermarkedUrl?: string;
+  beforeAfterSharePath?: string;
+  beforeAfterShareUrl?: string;
   estimatedCostUsd: number;
 };

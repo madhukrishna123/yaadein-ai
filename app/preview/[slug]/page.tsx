@@ -13,11 +13,11 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  const afterUrl = job.watermarkedPreviewUrl || job.restoredPreviewUrl || job.restoredHdUrl;
-  const isReady = Boolean(afterUrl);
   const payment = await getPaymentForJob(job.id);
   const isPaid = payment?.status === "paid" || ["paid", "hd_ready", "delivered"].includes(job.status);
   const isHdReady = Boolean(job.restoredHdUrl);
+  const afterUrl = isHdReady && job.restoredHdUrl ? job.restoredHdUrl : job.watermarkedPreviewUrl;
+  const isReady = Boolean(afterUrl);
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -48,15 +48,27 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               <br />
               Status: <span className="text-heirloom">{job.status}</span>
               <br />
+              Style: <span className="text-heirloom">{job.restorationStyle === "recreate" ? "Memory Recreate" : "Faithful Restore"}</span>
+              <br />
               Payment: <span className="text-heirloom">{isPaid ? "paid" : payment?.status ?? "not started"}</span>
             </div>
             {isHdReady && job.restoredHdUrl ? (
-              <a
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink"
-                href={job.restoredHdUrl}
-              >
-                <Download size={18} /> Open HD photo
-              </a>
+              <div className="mt-6 grid gap-3">
+                <a
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink"
+                  href={job.restoredHdUrl}
+                >
+                  <Download size={18} /> Download HD photo
+                </a>
+                {job.beforeAfterShareUrl ? (
+                  <a
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] border border-heirloom/35 bg-heirloom/10 px-5 py-3 font-semibold text-heirloom"
+                    href={job.beforeAfterShareUrl}
+                  >
+                    <Share2 size={18} /> Download before/after share image
+                  </a>
+                ) : null}
+              </div>
             ) : isPaid ? (
               <form action={`/api/jobs/${job.id}/export-hd`} method="post">
                 <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink" type="submit">
@@ -83,7 +95,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               </button>
               <a
                 className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm"
-                href={job.restoredHdUrl ?? afterUrl ?? "#"}
+                href={isPaid ? job.restoredHdUrl ?? job.beforeAfterShareUrl ?? afterUrl ?? "#" : afterUrl ?? "#"}
               >
                 <Download size={16} /> Save
               </a>

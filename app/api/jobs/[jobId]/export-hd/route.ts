@@ -34,7 +34,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ job
     const result = await restorePhotoForJob({
       jobId: job.id,
       sourceImagePath: job.sourceImagePath,
-      mode: "hd"
+      mode: "hd",
+      style: job.restorationStyle
     });
 
     const updated = await updateJob(jobId, {
@@ -42,6 +43,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ job
       processingMode: result.provider,
       restoredHdPath: result.restoredPath,
       restoredHdUrl: result.restoredUrl,
+      beforeAfterSharePath: result.beforeAfterSharePath,
+      beforeAfterShareUrl: result.beforeAfterShareUrl,
       hdCostUsd: result.estimatedCostUsd
     });
 

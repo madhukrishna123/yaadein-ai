@@ -60,6 +60,25 @@ export function getPricingPlan(planId: string | null | undefined) {
   return pricingPlans.find((plan) => plan.id === planId) ?? pricingPlans.find((plan) => plan.id === defaultPricingPlanId) ?? pricingPlans[0];
 }
 
+export const restorationStyles = [
+  {
+    id: "faithful",
+    name: "Faithful Restore",
+    description: "Repair damage and improve clarity while staying close to the original person, framing, and historical feel."
+  },
+  {
+    id: "recreate",
+    name: "Memory Recreate",
+    description: "A more magical AI recreation for heavily damaged photos where missing details may be reconstructed."
+  }
+] as const;
+
+export const defaultRestorationStyleId = "faithful";
+
+export function getRestorationStyle(styleId: string | null | undefined) {
+  return restorationStyles.find((style) => style.id === styleId) ?? restorationStyles.find((style) => style.id === defaultRestorationStyleId) ?? restorationStyles[0];
+}
+
 export const adminMetrics = [
   { label: "WhatsApp chat starts", value: "184", icon: MessageCircle },
   { label: "Photos received", value: "72", icon: ImageUp },

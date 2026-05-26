@@ -35,6 +35,7 @@ type JobRow = {
   customer_id: string | null;
   whatsapp_phone?: string | null;
   status: RestorationJob["status"];
+  restoration_style: RestorationJob["restorationStyle"] | null;
   source_image_url: string;
   source_image_path: string | null;
   restored_preview_url: string | null;
@@ -43,6 +44,8 @@ type JobRow = {
   watermarked_preview_path: string | null;
   restored_hd_url: string | null;
   restored_hd_path: string | null;
+  before_after_share_url: string | null;
+  before_after_share_path: string | null;
   share_page_slug: string;
   price_inr: number;
   preview_cost_usd: string | null;
@@ -96,13 +99,15 @@ export async function createJob(input: {
   sourceImageUrl: string;
   sourceImagePath?: string;
   priceInr?: number;
+  restorationStyle?: RestorationJob["restorationStyle"];
 }) {
   if (!hasDatabaseConfig()) {
     return createMockRestorationJob({
       id: input.id,
       customerPhone: input.customerPhone,
       sourceImageUrl: input.sourceImageUrl,
-      sourceImagePath: input.sourceImagePath
+      sourceImagePath: input.sourceImagePath,
+      restorationStyle: input.restorationStyle
     });
   }
 
@@ -115,10 +120,11 @@ export async function createJob(input: {
         status,
         source_image_url,
         source_image_path,
+        restoration_style,
         share_page_slug,
         price_inr
       )
-      values ($1, $2, 'photo_received', $3, $4, $5, $6)
+      values ($1, $2, 'photo_received', $3, $4, $5, $6, $7)
       returning *
     `,
     [
@@ -126,6 +132,7 @@ export async function createJob(input: {
       customer.id,
       input.sourceImageUrl,
       input.sourceImagePath ?? null,
+      input.restorationStyle ?? "faithful",
       input.id.toLowerCase(),
       input.priceInr ?? Number(process.env.PRICE_SINGLE_RESTORE_INR ?? 149)
     ]
@@ -185,7 +192,10 @@ export async function updateJob(jobId: string, patch: Partial<RestorationJob>) {
     ["watermarkedPreviewPath", "watermarked_preview_path"],
     ["restoredHdUrl", "restored_hd_url"],
     ["restoredHdPath", "restored_hd_path"],
+    ["beforeAfterShareUrl", "before_after_share_url"],
+    ["beforeAfterSharePath", "before_after_share_path"],
     ["priceInr", "price_inr"],
+    ["restorationStyle", "restoration_style"],
     ["processingMode", "processing_mode"],
     ["failureReason", "failure_reason"]
   ];
@@ -300,6 +310,7 @@ function mapJob(row: JobRow, fallbackPhone?: string): RestorationJob {
     id: row.id,
     customerPhone: row.whatsapp_phone ?? fallbackPhone ?? "unknown",
     status: row.status,
+    restorationStyle: row.restoration_style ?? "faithful",
     sourceImageUrl: row.source_image_url,
     sourceImagePath: row.source_image_path ?? undefined,
     restoredPreviewUrl: row.restored_preview_url ?? undefined,
@@ -308,6 +319,8 @@ function mapJob(row: JobRow, fallbackPhone?: string): RestorationJob {
     watermarkedPreviewPath: row.watermarked_preview_path ?? undefined,
     restoredHdUrl: row.restored_hd_url ?? undefined,
     restoredHdPath: row.restored_hd_path ?? undefined,
+    beforeAfterShareUrl: row.before_after_share_url ?? undefined,
+    beforeAfterSharePath: row.before_after_share_path ?? undefined,
     sharePageSlug: row.share_page_slug,
     priceInr: row.price_inr,
     previewCostUsd: row.preview_cost_usd ? Number(row.preview_cost_usd) : undefined,
