@@ -2,6 +2,7 @@ import { ArrowLeft, BadgeIndianRupee, Download, Share2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RealBeforeAfter } from "@/components/RealBeforeAfter";
+import { ShareButton } from "@/components/ShareButton";
 import { getJobBySlug } from "@/lib/job-repository";
 import { getPaymentForJob } from "@/lib/payment-repository";
 
@@ -19,6 +20,8 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
   const afterUrl = isHdReady && job.restoredHdUrl ? job.restoredHdUrl : job.watermarkedPreviewUrl;
   const isReady = Boolean(afterUrl);
   const needsPaymentBeforePreview = job.status === "awaiting_payment" && !isReady && !isPaid;
+  const hdDownloadUrl = `/api/jobs/${job.id}/download/hd`;
+  const shareDownloadUrl = `/api/jobs/${job.id}/download/share`;
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -59,14 +62,14 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               <div className="mt-6 grid gap-3">
                 <a
                   className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink"
-                  href={job.restoredHdUrl}
+                  href={hdDownloadUrl}
                 >
                   <Download size={18} /> Download HD photo
                 </a>
                 {job.beforeAfterShareUrl ? (
                   <a
                     className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] border border-heirloom/35 bg-heirloom/10 px-5 py-3 font-semibold text-heirloom"
-                    href={job.beforeAfterShareUrl}
+                    href={shareDownloadUrl}
                   >
                     <Share2 size={18} /> Download before/after share image
                   </a>
@@ -93,12 +96,10 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               </form>
             ) : null}
             <div className="mt-3 grid grid-cols-2 gap-3">
-              <button className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm">
-                <Share2 size={16} /> Share
-              </button>
+              <ShareButton url={job.beforeAfterShareUrl ?? job.restoredHdUrl ?? afterUrl ?? `/preview/${job.sharePageSlug}`} />
               <a
                 className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm"
-                href={isPaid ? job.restoredHdUrl ?? job.beforeAfterShareUrl ?? afterUrl ?? "#" : afterUrl ?? "#"}
+                href={isPaid && isHdReady ? hdDownloadUrl : afterUrl ?? "#"}
               >
                 <Download size={16} /> Save
               </a>
