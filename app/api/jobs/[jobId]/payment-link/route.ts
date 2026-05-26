@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { requestOrigin } from "@/lib/admin-auth";
 import { getJob, updateJob } from "@/lib/job-repository";
-import { getPaymentForJob, upsertPaymentLink } from "@/lib/payment-repository";
-import { createRazorpayPaymentLink, hasRazorpayConfig } from "@/lib/razorpay";
+import { ensurePaymentLinkForJob } from "@/lib/payment-flow";
+import { getPaymentForJob } from "@/lib/payment-repository";
+import { hasRazorpayConfig } from "@/lib/razorpay";
 
 export const runtime = "nodejs";
 
@@ -28,24 +29,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ job
     return redirectOrJson(request, existing.razorpayPaymentLinkUrl, { payment: existing });
   }
 
-  const paymentLink = await createRazorpayPaymentLink({
-    job,
-    baseUrl: requestOrigin(request)
-  });
+  const payment = await ensurePaymentLinkForJob(job, requestOrigin(request));
 
-  const payment = await upsertPaymentLink({
-    jobId: job.id,
-    amountInr: job.priceInr,
-    status: paymentLink.status,
-    razorpayPaymentLinkId: paymentLink.id,
-    razorpayPaymentLinkUrl: paymentLink.url
-  });
-
-  if (job.status === "preview_ready") {
-    await updateJob(job.id, { status: "awaiting_payment" });
-  }
-
-  return redirectOrJson(request, paymentLink.url, { payment });
+  return redirectOrJson(request, payment.razorpayPaymentLinkUrl ?? `/preview/${job.sharePageSlug}`, { payment });
 }
 
 function redirectOrJson(request: Request, url: string, body: unknown) {

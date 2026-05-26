@@ -58,6 +58,27 @@ Supported providers today:
 - `openai`: OpenAI image edit call.
 - `future-self-hosted`: reserved for Qwen/FLUX/restoration stack experiments; not implemented yet.
 
+## WhatsApp Full Delivery Flow
+
+- User sends an old photo to the Yaadein AI WhatsApp number.
+- WhatsApp webhook receives the image and downloads the media.
+- App creates a job with Launch Offer pricing and Faithful Restore style.
+- App sends a WhatsApp acknowledgement immediately.
+- App generates a watermarked preview and sends that preview image back on WhatsApp.
+- App creates a Razorpay payment link and sends it in the WhatsApp caption.
+- Razorpay webhook marks the job paid.
+- App generates the clean HD restore and before/after share image.
+- App sends both final images back to the user on WhatsApp.
+
+Required production env:
+
+```env
+WHATSAPP_ACCESS_TOKEN=
+WHATSAPP_PHONE_NUMBER_ID=
+WHATSAPP_BUSINESS_ACCOUNT_ID=
+WHATSAPP_WEBHOOK_VERIFY_TOKEN=
+```
+
 ## Database Tables
 
 ### customers

@@ -2,6 +2,8 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
 import { updateJob } from "@/lib/job-repository";
 import { markPaymentPaid, updatePaymentStatus } from "@/lib/payment-repository";
+import { deliverPaidWhatsAppJob } from "@/lib/whatsapp-workflow";
+import { hasWhatsAppConfig } from "@/lib/whatsapp";
 
 export const runtime = "nodejs";
 
@@ -34,6 +36,9 @@ export async function POST(request: Request) {
 
     if (payment) {
       await updateJob(payment.jobId, { status: "paid" });
+      if (hasWhatsAppConfig()) {
+        await deliverPaidWhatsAppJob(payment.jobId);
+      }
     }
 
     return NextResponse.json({ received: true, paid: true });

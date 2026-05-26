@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { getJob, updateJob } from "@/lib/job-repository";
 import { getPaymentForJob, markPaymentPaid, updatePaymentStatus } from "@/lib/payment-repository";
 import { getRazorpayPaymentLink, hasRazorpayConfig } from "@/lib/razorpay";
+import { hasWhatsAppConfig } from "@/lib/whatsapp";
+import { deliverPaidWhatsAppJob } from "@/lib/whatsapp-workflow";
 
 export const runtime = "nodejs";
 
@@ -31,6 +33,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ job
       razorpayPaymentId: razorpayPayment.paymentId
     });
     const updated = await updateJob(job.id, { status: "paid" });
+    if (hasWhatsAppConfig()) {
+      await deliverPaidWhatsAppJob(job.id);
+    }
 
     return redirectOrJson(request, `/preview/${job.sharePageSlug}`, {
       paid: true,
