@@ -45,8 +45,6 @@ export async function createBeforeAfterShareImage(beforeBuffer: Buffer, afterBuf
   const width = 1600;
   const height = 1200;
   const panelWidth = width / 2;
-  const labelFont = 38;
-  const brandFont = 34;
   const before = await sharp(beforeBuffer)
     .rotate()
     .resize({ width: panelWidth, height, fit: "cover", position: "attention" })
@@ -69,13 +67,20 @@ export async function createBeforeAfterShareImage(beforeBuffer: Buffer, afterBuf
       <rect width="100%" height="100%" fill="none"/>
       <rect x="0" y="${height - 210}" width="${width}" height="210" fill="url(#bottom)"/>
       <line x1="${panelWidth}" y1="0" x2="${panelWidth}" y2="${height}" stroke="#f4d27d" stroke-width="6"/>
-      <g font-family="Arial, Helvetica, sans-serif" font-weight="700">
-        <rect x="44" y="42" rx="18" ry="18" width="150" height="62" fill="#080706" opacity="0.72"/>
-        <text x="72" y="84" font-size="${labelFont}" fill="#fff7ea">Before</text>
-        <rect x="${panelWidth + 44}" y="42" rx="18" ry="18" width="170" height="62" fill="#080706" opacity="0.72"/>
-        <text x="${panelWidth + 72}" y="84" font-size="${labelFont}" fill="#fff7ea">Restored</text>
-        <text x="52" y="${height - 68}" font-size="${brandFont}" fill="#f4d27d">Yaadein AI</text>
-        <text x="52" y="${height - 28}" font-size="24" fill="#fff7ea">Restored memories worth sharing</text>
+      <rect x="44" y="42" rx="18" ry="18" width="164" height="62" fill="#080706" opacity="0.72"/>
+      <rect x="${panelWidth + 44}" y="42" rx="18" ry="18" width="164" height="62" fill="#080706" opacity="0.72"/>
+      <circle cx="78" cy="73" r="15" fill="#d8cbb9"/>
+      <circle cx="112" cy="73" r="15" fill="#d8cbb9"/>
+      <circle cx="146" cy="73" r="15" fill="#d8cbb9"/>
+      <rect x="${panelWidth + 72}" y="57" rx="8" ry="8" width="104" height="32" fill="#f4d27d"/>
+      <circle cx="${panelWidth + 92}" cy="73" r="7" fill="#080706"/>
+      <circle cx="${panelWidth + 122}" cy="73" r="7" fill="#080706"/>
+      <circle cx="${panelWidth + 152}" cy="73" r="7" fill="#080706"/>
+      <g opacity="0.92">
+        <circle cx="72" cy="${height - 72}" r="24" fill="#f4d27d"/>
+        <path d="M58 ${height - 72} C58 ${height - 88}, 86 ${height - 88}, 86 ${height - 72} C86 ${height - 56}, 58 ${height - 56}, 58 ${height - 72} Z" fill="none" stroke="#080706" stroke-width="5"/>
+        <rect x="112" y="${height - 88}" width="190" height="14" rx="7" fill="#f4d27d"/>
+        <rect x="112" y="${height - 62}" width="330" height="10" rx="5" fill="#fff7ea" opacity="0.86"/>
       </g>
     </svg>
   `);
