@@ -12,12 +12,19 @@ export function FakeWhatsAppDemo() {
   const [fileName, setFileName] = useState("");
   const [previewUrl, setPreviewUrl] = useState("");
   const [error, setError] = useState("");
+  const [phone, setPhone] = useState("+919885711673");
   const [selectedPlanId, setSelectedPlanId] = useState(defaultPricingPlanId);
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
   const selectedPlan = getPricingPlan(selectedPlanId);
+  const normalizedPhone = normalizePhone(phone);
 
   async function handleFile(file?: File) {
     if (!file) return;
+
+    if (!normalizedPhone) {
+      setError("Enter a WhatsApp number before uploading.");
+      return;
+    }
 
     setFileName(file.name);
     setPreviewUrl("");
@@ -26,7 +33,7 @@ export function FakeWhatsAppDemo() {
 
     try {
       const formData = new FormData();
-      formData.append("phone", "+919999999999");
+      formData.append("phone", normalizedPhone);
       formData.append("planId", selectedPlan.id);
       formData.append("photo", file);
 
@@ -81,6 +88,19 @@ export function FakeWhatsAppDemo() {
       <div className="scrollbar-clean max-h-[28rem] space-y-3 overflow-y-auto pr-1">
         <ChatBubble side="left">Upload one old photo. We will create a free watermarked restoration preview.</ChatBubble>
         <ChatBubble side="left">Scanned photos and clear phone pictures both work. Avoid glare for best results.</ChatBubble>
+
+        <label className="grid gap-2 rounded-[8px] border border-white/10 bg-white/[0.05] p-3 text-sm text-[#f5eadb]">
+          <span className="text-xs uppercase tracking-[0.16em] text-heirloom">WhatsApp number</span>
+          <input
+            className="w-full rounded-[8px] border border-white/12 bg-ink/50 px-3 py-2 text-[#fff7ea] outline-none transition placeholder:text-[#8b7e6c] focus:border-heirloom/70"
+            disabled={state === "processing"}
+            inputMode="tel"
+            onChange={(event) => setPhone(event.target.value)}
+            placeholder="+91 98857 11673"
+            type="tel"
+            value={phone}
+          />
+        </label>
 
         <div className="grid gap-2">
           {pricingPlans.map((plan) => (
@@ -177,6 +197,13 @@ export function FakeWhatsAppDemo() {
       </label>
     </div>
   );
+}
+
+function normalizePhone(value: string) {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return "";
+  if (digits.length === 10) return `+91${digits}`;
+  return `+${digits}`;
 }
 
 function ChatBubble({ side, children }: { side: "left" | "right"; children: React.ReactNode }) {
