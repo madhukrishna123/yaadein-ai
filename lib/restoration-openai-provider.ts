@@ -35,7 +35,7 @@ export async function restoreWithOpenAIProvider(
   style: RestorationStyle
 ): Promise<RestorationProviderResult> {
   const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-  const model = process.env.OPENAI_IMAGE_MODEL ?? "gpt-image-1.5";
+  const model = process.env.OPENAI_IMAGE_MODEL ?? "gpt-image-2";
   const quality =
     mode === "hd"
       ? process.env.OPENAI_IMAGE_HD_QUALITY ?? "high"
@@ -47,16 +47,24 @@ export async function restoreWithOpenAIProvider(
     type: mimeTypeForPath(sourceImagePath)
   });
 
-  const response = await client.images.edit({
+  const editRequest = {
     model,
     image: imageFile,
     prompt: promptForStyle(style),
     quality: quality as "low" | "medium" | "high" | "auto",
-    size: "auto",
-    output_format: "jpeg",
-    input_fidelity: inputFidelity as "low" | "high",
+    size: "auto" as const,
+    output_format: "jpeg" as const,
     user: `yaadein-${mode}-${style}`
-  });
+  };
+
+  const response = await client.images.edit(
+    model === "gpt-image-2"
+      ? editRequest
+      : {
+          ...editRequest,
+          input_fidelity: inputFidelity as "low" | "high"
+        }
+  );
 
   const b64 = response.data?.[0]?.b64_json;
   if (!b64) {
