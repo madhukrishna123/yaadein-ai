@@ -54,7 +54,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               <br />
               Status: <span className="text-heirloom">{job.status}</span>
               <br />
-              Style: <span className="text-heirloom">{job.restorationStyle === "recreate" ? "Memory Recreate" : "Faithful Restore"}</span>
+              Style: <span className="text-heirloom">{job.restorationStyle === "recreate" ? "Memory Recreate" : "Yaadein Magic"}</span>
               <br />
               Payment: <span className="text-heirloom">{isPaid ? "paid" : payment?.status ?? "not started"}</span>
             </div>

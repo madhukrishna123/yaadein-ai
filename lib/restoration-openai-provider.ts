@@ -2,15 +2,14 @@ import OpenAI, { toFile } from "openai";
 import { RestorationMode, RestorationProviderResult, RestorationStyle } from "@/lib/restoration-types";
 import { readStoredImageBuffer } from "@/lib/storage-read";
 
-const FAITHFUL_RESTORE_PROMPT = [
-  "Perform a conservative faithful restoration of this exact photograph.",
-  "Preserve the original aspect ratio, composition, crop, camera angle, background, horizon, pose, body shape, clothing, hair, face shape, age, expression, skin tone, and emotional tone.",
-  "Do not zoom, crop, reframe, center subjects differently, add people, remove people, replace faces, replace clothing, change body proportions, change the scene, or invent new readable details.",
-  "For low-resolution or blurry modern photos, enhance only what is present in the source. Do not reconstruct a new face when facial detail is unclear.",
-  "Remove scratches, dust, stains, noise, blur, fading, compression artifacts, and low-quality damage only when doing so does not change identity or scene content.",
-  "Improve lighting, sharpness, contrast, and color balance naturally and subtly.",
-  "Keep black-and-white photos black and white unless color is clearly present in the source.",
-  "Do not beautify, modernize, alter age, change facial identity, over-smooth skin, or make the result look artificially generated."
+const YAADEIN_MAGIC_PROMPT = [
+  "Create a beautiful, emotionally warm, realistic restoration of this exact photo.",
+  "Make the result feel magical, premium, and share-worthy while preserving the same people, identity, age, expression, pose, body shape, clothing, background, camera angle, aspect ratio, and overall composition.",
+  "Improve blur, noise, scratches, faded color, low light, contrast, detail, facial clarity, skin texture, and natural sharpness.",
+  "Enhance faces gently so they look clearer and alive, but do not replace faces, change facial identity, alter body shape, modernize clothing, add people, remove people, crop people out, zoom in, or reframe the scene.",
+  "For modern low-resolution photos, preserve the scene and people exactly; improve clarity and lighting without inventing a different photograph.",
+  "For black-and-white or very old photos, keep the historic feeling and only reconstruct missing details when needed.",
+  "The output should look like the original memory was captured beautifully, not like a new unrelated AI-generated photo."
 ].join(" ");
 
 const MEMORY_RECREATE_PROMPT = [
@@ -22,7 +21,7 @@ const MEMORY_RECREATE_PROMPT = [
   "Preserve the original portrait framing unless repair requires subtle cropping."
 ].join(" ");
 
-export const RESTORATION_PROMPT = FAITHFUL_RESTORE_PROMPT;
+export const RESTORATION_PROMPT = YAADEIN_MAGIC_PROMPT;
 
 export function hasOpenAIImageConfig() {
   return Boolean(process.env.OPENAI_API_KEY);
@@ -73,7 +72,7 @@ export async function restoreWithOpenAIProvider(
 }
 
 function promptForStyle(style: RestorationStyle) {
-  return style === "recreate" ? MEMORY_RECREATE_PROMPT : FAITHFUL_RESTORE_PROMPT;
+  return style === "recreate" ? MEMORY_RECREATE_PROMPT : YAADEIN_MAGIC_PROMPT;
 }
 
 function estimateOpenAIImageCost(mode: RestorationMode) {

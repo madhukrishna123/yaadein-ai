@@ -63,8 +63,8 @@ export function getPricingPlan(planId: string | null | undefined) {
 export const restorationStyles = [
   {
     id: "faithful",
-    name: "Faithful Restore",
-    description: "Conservative cleanup that preserves the original framing, people, faces, clothing, and scene."
+    name: "Yaadein Magic",
+    description: "Beautiful, emotional restoration that keeps the same people, framing, clothing, and memory."
   },
   {
     id: "recreate",
