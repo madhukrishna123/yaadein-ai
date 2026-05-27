@@ -4,10 +4,12 @@ import { readStoredImageBuffer } from "@/lib/storage-read";
 
 const YAADEIN_MAGIC_PROMPT = [
   "Create a beautiful, emotionally warm, realistic restoration of this exact photo.",
-  "Make the result feel magical, premium, and share-worthy while preserving the same people, identity, age, expression, pose, body shape, clothing, background, camera angle, aspect ratio, and overall composition.",
-  "Improve blur, noise, scratches, faded color, low light, contrast, detail, facial clarity, skin texture, and natural sharpness.",
-  "Enhance faces gently so they look clearer and alive, but do not replace faces, change facial identity, alter body shape, modernize clothing, add people, remove people, crop people out, zoom in, or reframe the scene.",
-  "For modern low-resolution photos, preserve the scene and people exactly; improve clarity and lighting without inventing a different photograph.",
+  "This is identity-preserving photo enhancement, not face reconstruction.",
+  "Keep each person's facial geometry exactly aligned with the source: face shape, jawline, cheek shape, eye spacing, nose width, mouth shape, smile, eyebrows, hairline, forehead, ears, age, and expression must remain the same.",
+  "Make the result feel magical, premium, and share-worthy while preserving the same people, pose, body shape, clothing, background, camera angle, aspect ratio, and overall composition.",
+  "Improve blur, noise, scratches, faded color, low light, contrast, detail, skin texture, and natural sharpness without changing identity.",
+  "Do not replace faces, beautify faces, change facial structure, alter body shape, modernize clothing, add people, remove people, crop people out, zoom in, or reframe the scene.",
+  "For modern low-resolution or blurry photos, preserve the scene and people exactly; improve clarity and lighting without inventing different faces or a different photograph.",
   "For black-and-white or very old photos, keep the historic feeling and only reconstruct missing details when needed.",
   "The output should look like the original memory was captured beautifully, not like a new unrelated AI-generated photo."
 ].join(" ");
@@ -38,10 +40,7 @@ export async function restoreWithOpenAIProvider(
     mode === "hd"
       ? process.env.OPENAI_IMAGE_HD_QUALITY ?? "high"
       : process.env.OPENAI_IMAGE_PREVIEW_QUALITY ?? "low";
-  const inputFidelity =
-    mode === "hd"
-      ? process.env.OPENAI_HD_INPUT_FIDELITY ?? "high"
-      : process.env.OPENAI_PREVIEW_INPUT_FIDELITY ?? "low";
+  const inputFidelity = inputFidelityFor(mode, style);
 
   const imageBuffer = await readStoredImageBuffer(sourceImagePath);
   const imageFile = await toFile(imageBuffer, filenameForMime(sourceImagePath), {
@@ -73,6 +72,13 @@ export async function restoreWithOpenAIProvider(
 
 function promptForStyle(style: RestorationStyle) {
   return style === "recreate" ? MEMORY_RECREATE_PROMPT : YAADEIN_MAGIC_PROMPT;
+}
+
+function inputFidelityFor(mode: RestorationMode, style: RestorationStyle) {
+  if (style === "faithful") return "high";
+  return mode === "hd"
+    ? process.env.OPENAI_HD_INPUT_FIDELITY ?? "high"
+    : process.env.OPENAI_PREVIEW_INPUT_FIDELITY ?? "low";
 }
 
 function estimateOpenAIImageCost(mode: RestorationMode) {

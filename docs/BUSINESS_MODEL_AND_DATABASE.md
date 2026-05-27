@@ -48,7 +48,7 @@ Phase 1 provider routing:
 ```env
 RESTORATION_PREVIEW_PROVIDER=local
 RESTORATION_HD_PROVIDER=openai
-OPENAI_PREVIEW_INPUT_FIDELITY=low
+OPENAI_PREVIEW_INPUT_FIDELITY=high
 OPENAI_HD_INPUT_FIDELITY=high
 ```
 
@@ -57,6 +57,11 @@ Supported providers today:
 - `local`: cheap Sharp-based preview enhancement.
 - `openai`: OpenAI image edit call.
 - `future-self-hosted`: reserved for Qwen/FLUX/restoration stack experiments; not implemented yet.
+
+Quality rule:
+
+- Yaadein Magic always uses high input fidelity so faces and family identity stay close to the source.
+- Memory Recreate can be more creative for badly damaged photos, but it must be labelled as reconstruction.
 
 ## WhatsApp Full Delivery Flow
 
@@ -177,6 +182,7 @@ Production rule:
 - Set `FREE_PREVIEW_LIMIT_PER_PHONE=1`.
 - Set `PRICE_SINGLE_RESTORE_INR=149`.
 - Keep `OPENAI_IMAGE_PREVIEW_QUALITY=low`.
+- Keep `OPENAI_PREVIEW_INPUT_FIDELITY=high` for identity safety.
 
 Local setup commands:
 
