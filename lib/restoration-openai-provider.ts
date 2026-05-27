@@ -3,12 +3,14 @@ import { RestorationMode, RestorationProviderResult, RestorationStyle } from "@/
 import { readStoredImageBuffer } from "@/lib/storage-read";
 
 const FAITHFUL_RESTORE_PROMPT = [
-  "Restore this old damaged photograph into a realistic high-definition image while preserving identity, emotions, authenticity, skin texture, clothing details, facial structure, age, expression, and historical accuracy.",
-  "Remove scratches, dust, stains, noise, blur, fading, compression artifacts, and low-quality damage.",
-  "Improve facial clarity, lighting, sharpness, contrast, and color balance naturally.",
+  "Perform a conservative faithful restoration of this exact photograph.",
+  "Preserve the original aspect ratio, composition, crop, camera angle, background, horizon, pose, body shape, clothing, hair, face shape, age, expression, skin tone, and emotional tone.",
+  "Do not zoom, crop, reframe, center subjects differently, add people, remove people, replace faces, replace clothing, change body proportions, change the scene, or invent new readable details.",
+  "For low-resolution or blurry modern photos, enhance only what is present in the source. Do not reconstruct a new face when facial detail is unclear.",
+  "Remove scratches, dust, stains, noise, blur, fading, compression artifacts, and low-quality damage only when doing so does not change identity or scene content.",
+  "Improve lighting, sharpness, contrast, and color balance naturally and subtly.",
   "Keep black-and-white photos black and white unless color is clearly present in the source.",
-  "Preserve the original composition, crop, pose, background, clothing, expression, face shape, and emotional tone.",
-  "Do not beautify, modernize, alter age, change facial identity, over-smooth skin, invent unrealistic details, or make the result look artificially generated."
+  "Do not beautify, modernize, alter age, change facial identity, over-smooth skin, or make the result look artificially generated."
 ].join(" ");
 
 const MEMORY_RECREATE_PROMPT = [

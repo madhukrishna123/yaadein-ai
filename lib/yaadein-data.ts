@@ -64,7 +64,7 @@ export const restorationStyles = [
   {
     id: "faithful",
     name: "Faithful Restore",
-    description: "Repair damage and improve clarity while staying close to the original person, framing, and historical feel."
+    description: "Conservative cleanup that preserves the original framing, people, faces, clothing, and scene."
   },
   {
     id: "recreate",

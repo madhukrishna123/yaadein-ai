@@ -47,12 +47,12 @@ export async function createBeforeAfterShareImage(beforeBuffer: Buffer, afterBuf
   const panelWidth = width / 2;
   const before = await sharp(beforeBuffer)
     .rotate()
-    .resize({ width: panelWidth, height, fit: "cover", position: "attention" })
+    .resize({ width: panelWidth, height, fit: "contain", background: "#11100e" })
     .jpeg({ quality: 92 })
     .toBuffer();
   const after = await sharp(afterBuffer)
     .rotate()
-    .resize({ width: panelWidth, height, fit: "cover", position: "attention" })
+    .resize({ width: panelWidth, height, fit: "contain", background: "#11100e" })
     .jpeg({ quality: 92 })
     .toBuffer();
 
