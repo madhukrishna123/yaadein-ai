@@ -2,16 +2,22 @@ import OpenAI, { toFile } from "openai";
 import { RestorationMode, RestorationProviderResult, RestorationStyle } from "@/lib/restoration-types";
 import { readStoredImageBuffer } from "@/lib/storage-read";
 
-const YAADEIN_MAGIC_PROMPT = [
-  "Create a beautiful, emotionally warm, realistic restoration of this exact photo.",
-  "This is identity-preserving photo enhancement, not face reconstruction.",
-  "Keep each person's facial geometry exactly aligned with the source: face shape, jawline, cheek shape, eye spacing, nose width, mouth shape, smile, eyebrows, hairline, forehead, ears, age, and expression must remain the same.",
-  "Make the result feel magical, premium, and share-worthy while preserving the same people, pose, body shape, clothing, background, camera angle, aspect ratio, and overall composition.",
-  "Improve blur, noise, scratches, faded color, low light, contrast, detail, skin texture, and natural sharpness without changing identity.",
-  "Do not replace faces, beautify faces, change facial structure, alter body shape, modernize clothing, add people, remove people, crop people out, zoom in, or reframe the scene.",
-  "For modern low-resolution or blurry photos, preserve the scene and people exactly; improve clarity and lighting without inventing different faces or a different photograph.",
-  "For black-and-white or very old photos, keep the historic feeling and only reconstruct missing details when needed.",
-  "The output should look like the original memory was captured beautifully, not like a new unrelated AI-generated photo."
+const NATURAL_ENHANCE_PROMPT = [
+  "Enhance this photo naturally while keeping the same people and scene.",
+  "Improve clarity, lighting, sharpness, color balance, noise, blur, and compression artifacts.",
+  "Preserve the original face, expression, body shape, pose, clothing, background, framing, and camera angle.",
+  "Do not recreate the photo, replace faces, beautify people, change facial structure, change body proportions, remove people, add people, crop in, or invent missing details.",
+  "If details are too blurry to know, keep them softly natural instead of guessing.",
+  "The result should look like a cleaner version of the original photo, not a new AI-generated photo."
+].join(" ");
+
+const MEMORY_RESTORE_PROMPT = [
+  "Restore this old or damaged photograph into a realistic, clean, high-definition memory.",
+  "Preserve the same people, identity, emotions, clothing, background, composition, and historical feeling.",
+  "Remove scratches, dust, stains, fading, low light, noise, blur, and compression artifacts.",
+  "Improve facial clarity, lighting, color balance, texture, and natural sharpness without changing who the people are.",
+  "Colorize only when appropriate and keep colors natural and historically plausible.",
+  "Do not make faces plastic, modernize clothing, change age, change expression, add people, remove people, or make the image look artificially generated."
 ].join(" ");
 
 const MEMORY_RECREATE_PROMPT = [
@@ -23,7 +29,7 @@ const MEMORY_RECREATE_PROMPT = [
   "Preserve the original portrait framing unless repair requires subtle cropping."
 ].join(" ");
 
-export const RESTORATION_PROMPT = YAADEIN_MAGIC_PROMPT;
+export const RESTORATION_PROMPT = NATURAL_ENHANCE_PROMPT;
 
 export function hasOpenAIImageConfig() {
   return Boolean(process.env.OPENAI_API_KEY);
@@ -79,11 +85,13 @@ export async function restoreWithOpenAIProvider(
 }
 
 function promptForStyle(style: RestorationStyle) {
-  return style === "recreate" ? MEMORY_RECREATE_PROMPT : YAADEIN_MAGIC_PROMPT;
+  if (style === "recreate") return MEMORY_RECREATE_PROMPT;
+  if (style === "restore") return MEMORY_RESTORE_PROMPT;
+  return NATURAL_ENHANCE_PROMPT;
 }
 
 function inputFidelityFor(mode: RestorationMode, style: RestorationStyle) {
-  if (style === "faithful") return "high";
+  if (style === "natural" || style === "faithful" || style === "restore") return "high";
   return mode === "hd"
     ? process.env.OPENAI_HD_INPUT_FIDELITY ?? "high"
     : process.env.OPENAI_PREVIEW_INPUT_FIDELITY ?? "low";

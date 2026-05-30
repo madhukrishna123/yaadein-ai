@@ -5,6 +5,7 @@ import { RealBeforeAfter } from "@/components/RealBeforeAfter";
 import { ShareButton } from "@/components/ShareButton";
 import { getJobBySlug } from "@/lib/job-repository";
 import { getPaymentForJob } from "@/lib/payment-repository";
+import { getRestorationStyle } from "@/lib/yaadein-data";
 
 export default async function PreviewPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -22,6 +23,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
   const needsPaymentBeforePreview = job.status === "awaiting_payment" && !isReady && !isPaid;
   const hdDownloadUrl = `/api/jobs/${job.id}/download/hd`;
   const shareDownloadUrl = `/api/jobs/${job.id}/download/share`;
+  const restorationStyle = getRestorationStyle(job.restorationStyle);
 
   return (
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
@@ -54,7 +56,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               <br />
               Status: <span className="text-heirloom">{job.status}</span>
               <br />
-              Style: <span className="text-heirloom">{job.restorationStyle === "recreate" ? "Memory Recreate" : "Yaadein Magic"}</span>
+              Style: <span className="text-heirloom">{restorationStyle.name}</span>
               <br />
               Payment: <span className="text-heirloom">{isPaid ? "paid" : payment?.status ?? "not started"}</span>
             </div>

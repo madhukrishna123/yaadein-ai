@@ -13,7 +13,7 @@ export type RestorationJob = {
   id: string;
   customerPhone: string;
   status: JobStatus;
-  restorationStyle: "faithful" | "recreate";
+  restorationStyle: "natural" | "restore" | "recreate" | "faithful";
   sourceImageUrl: string;
   sourceImagePath?: string;
   restoredPreviewPath?: string;
@@ -55,7 +55,7 @@ export const mockJobs: RestorationJob[] = [
     id: "YA-1042",
     customerPhone: "+919876543210",
     status: "preview_ready",
-    restorationStyle: "faithful",
+    restorationStyle: "natural",
     sourceImageUrl: "mock://old-family-photo.jpg",
     watermarkedPreviewUrl: "mock://preview-watermarked.jpg",
     sharePageSlug: "ya-1042-grandparents",
@@ -71,7 +71,7 @@ export function createMockJob(customerPhone = "+919999999999", sourceImageUrl = 
     id,
     customerPhone,
     status: "photo_received",
-    restorationStyle: "faithful",
+    restorationStyle: "natural",
     sourceImageUrl,
     sharePageSlug: id.toLowerCase(),
     priceInr: 149,
@@ -87,7 +87,7 @@ export function createRestorationJob(input: {
   customerPhone?: string;
   sourceImageUrl: string;
   sourceImagePath?: string;
-  restorationStyle?: "faithful" | "recreate";
+  restorationStyle?: "natural" | "restore" | "recreate" | "faithful";
 }) {
   const job = createMockJob(input.customerPhone, input.sourceImageUrl);
   if (input.id) {
@@ -95,7 +95,7 @@ export function createRestorationJob(input: {
     job.sharePageSlug = input.id.toLowerCase();
   }
   job.sourceImagePath = input.sourceImagePath;
-  job.restorationStyle = input.restorationStyle ?? "faithful";
+  job.restorationStyle = input.restorationStyle ?? "natural";
   return job;
 }
 

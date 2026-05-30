@@ -132,7 +132,7 @@ export async function createJob(input: {
       customer.id,
       input.sourceImageUrl,
       input.sourceImagePath ?? null,
-      input.restorationStyle ?? "faithful",
+      input.restorationStyle ?? "natural",
       input.id.toLowerCase(),
       input.priceInr ?? Number(process.env.PRICE_SINGLE_RESTORE_INR ?? 149)
     ]
@@ -310,7 +310,7 @@ function mapJob(row: JobRow, fallbackPhone?: string): RestorationJob {
     id: row.id,
     customerPhone: row.whatsapp_phone ?? fallbackPhone ?? "unknown",
     status: row.status,
-    restorationStyle: row.restoration_style ?? "faithful",
+    restorationStyle: row.restoration_style ?? "natural",
     sourceImageUrl: row.source_image_url,
     sourceImagePath: row.source_image_path ?? undefined,
     restoredPreviewUrl: row.restored_preview_url ?? undefined,

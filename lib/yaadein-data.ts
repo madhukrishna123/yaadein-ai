@@ -62,9 +62,14 @@ export function getPricingPlan(planId: string | null | undefined) {
 
 export const restorationStyles = [
   {
-    id: "faithful",
-    name: "Yaadein Magic",
-    description: "Beautiful, emotional restoration that keeps the same people, framing, clothing, and memory."
+    id: "natural",
+    name: "Natural Enhance",
+    description: "Best for blurry phone photos. Cleans light, sharpness, and noise without recreating faces."
+  },
+  {
+    id: "restore",
+    name: "Memory Restore",
+    description: "Best for old album photos with fading, scratches, stains, or color damage."
   },
   {
     id: "recreate",
@@ -73,9 +78,10 @@ export const restorationStyles = [
   }
 ] as const;
 
-export const defaultRestorationStyleId = "faithful";
+export const defaultRestorationStyleId = "natural";
 
 export function getRestorationStyle(styleId: string | null | undefined) {
+  if (styleId === "faithful") return restorationStyles[0];
   return restorationStyles.find((style) => style.id === styleId) ?? restorationStyles.find((style) => style.id === defaultRestorationStyleId) ?? restorationStyles[0];
 }
 

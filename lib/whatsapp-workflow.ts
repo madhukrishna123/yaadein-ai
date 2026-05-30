@@ -38,7 +38,7 @@ export async function handleWhatsAppImage(input: {
     sourceImagePath: original.absolutePath,
     sourceImageUrl: original.publicUrl,
     priceInr: 149,
-    restorationStyle: "faithful"
+    restorationStyle: "natural"
   });
 
   const customer = await getCustomerByPhone(phone);

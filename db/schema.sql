@@ -11,7 +11,7 @@ create table if not exists restoration_jobs (
   id text primary key,
   customer_id uuid references customers(id) on delete set null,
   status text not null,
-  restoration_style text not null default 'faithful',
+  restoration_style text not null default 'natural',
   source_image_url text not null,
   source_image_path text,
   restored_preview_url text,
@@ -32,7 +32,7 @@ create table if not exists restoration_jobs (
   updated_at timestamptz not null default now()
 );
 
-alter table restoration_jobs add column if not exists restoration_style text not null default 'faithful';
+alter table restoration_jobs add column if not exists restoration_style text not null default 'natural';
 alter table restoration_jobs add column if not exists before_after_share_url text;
 alter table restoration_jobs add column if not exists before_after_share_path text;
 

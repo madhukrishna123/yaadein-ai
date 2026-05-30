@@ -1,6 +1,6 @@
 export type RestorationMode = "preview" | "hd";
 
-export type RestorationStyle = "faithful" | "recreate";
+export type RestorationStyle = "natural" | "restore" | "recreate" | "faithful";
 
 export type RestorationProvider = "local" | "openai" | "future-self-hosted";
 
