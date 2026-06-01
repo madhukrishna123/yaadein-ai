@@ -23,6 +23,7 @@ export function FakeWhatsAppDemo() {
   const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
   const phoneInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedPlanId, setSelectedPlanId] = useState(defaultPricingPlanId);
   const [selectedStyleId, setSelectedStyleId] = useState(defaultRestorationStyleId);
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
@@ -87,6 +88,10 @@ export function FakeWhatsAppDemo() {
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Something went wrong while restoring this photo.");
       setState("idle");
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   }
 
@@ -237,7 +242,11 @@ export function FakeWhatsAppDemo() {
           type="file"
           accept="image/*"
           disabled={state === "processing"}
+          onClick={(event) => {
+            event.currentTarget.value = "";
+          }}
           onChange={(event) => handleFile(event.target.files?.[0])}
+          ref={fileInputRef}
         />
       </label>
     </div>
