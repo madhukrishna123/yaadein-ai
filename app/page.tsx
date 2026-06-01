@@ -73,7 +73,7 @@ export default function Home() {
           <div className="hidden items-center gap-6 text-sm text-[#cbbda9] sm:flex">
             <a href="#restore">Restore</a>
             <a href="#pricing">Pricing</a>
-            <a href="#care">Care</a>
+            <a href="#promise">Promise</a>
           </div>
           <a
             className="inline-flex items-center gap-2 rounded-full bg-heirloom px-4 py-2 text-sm font-semibold text-ink transition hover:bg-[#efcf83]"
@@ -130,7 +130,7 @@ export default function Home() {
       <Section eyebrow="Restore Now" id="restore" title="Upload a photo and get a free preview">
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1fr] lg:items-start">
           <FakeWhatsAppDemo />
-          <div className="space-y-4" id="care">
+          <div className="space-y-4" id="promise">
             {promiseCards.map((item) => (
               <div className="glass-panel rounded-[8px] p-5" key={item.title}>
                 <item.icon className="mb-4 text-heirloom" size={22} />
