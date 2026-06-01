@@ -88,7 +88,7 @@ export default function Home() {
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.98fr_1fr] lg:items-center">
           <div>
             <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-heirloom/30 bg-heirloom/10 px-4 py-2 text-sm text-heirloom">
-              <Sparkles size={16} /> AI restoration for old family photos
+              <Sparkles size={16} /> Restoration for old family photos
             </p>
             <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] text-[#fff7ea] sm:text-6xl lg:text-7xl">
               Bring old photos back to life.
