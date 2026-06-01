@@ -6,6 +6,7 @@ const NATURAL_ENHANCE_PROMPT = [
   "Enhance this photo naturally while keeping the same people and scene.",
   "Improve clarity, lighting, sharpness, color balance, noise, blur, and compression artifacts.",
   "Preserve the original face, expression, body shape, pose, clothing, background, framing, and camera angle.",
+  "Preserve the original aspect ratio and full framing, including all people, faces, hands, clothing, and important background details.",
   "Do not recreate the photo, replace faces, beautify people, change facial structure, change body proportions, remove people, add people, crop in, or invent missing details.",
   "If details are too blurry to know, keep them softly natural instead of guessing.",
   "The result should look like a cleaner version of the original photo, not a new AI-generated photo."
@@ -14,6 +15,7 @@ const NATURAL_ENHANCE_PROMPT = [
 const MEMORY_RESTORE_PROMPT = [
   "Restore this old or damaged photograph into a realistic, clean, high-definition memory.",
   "Preserve the same people, identity, emotions, clothing, background, composition, and historical feeling.",
+  "Preserve the original aspect ratio and full framing, including all people, faces, hands, clothing, and important background details.",
   "Remove scratches, dust, stains, fading, low light, noise, blur, and compression artifacts.",
   "Improve facial clarity, lighting, color balance, texture, and natural sharpness without changing who the people are.",
   "Colorize only when appropriate and keep colors natural and historically plausible.",
@@ -26,7 +28,7 @@ const MEMORY_RECREATE_PROMPT = [
   "Reconstruct missing details only where the original is badly damaged or unreadable, while preserving the person's likely identity, age, expression, clothing style, and historical feel.",
   "Colorize black-and-white photos with historically plausible colors and natural lighting.",
   "Make the result emotionally warm and shareable, but avoid a plastic, over-smoothed, cartoon, or obviously generated look.",
-  "Preserve the original portrait framing unless repair requires subtle cropping."
+  "Preserve the original aspect ratio and full framing unless repair requires subtle cropping."
 ].join(" ");
 
 export const RESTORATION_PROMPT = NATURAL_ENHANCE_PROMPT;
