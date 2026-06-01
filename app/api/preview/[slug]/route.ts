@@ -25,5 +25,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
       beforeAfterShareUrl: isPaid ? job.beforeAfterShareUrl : undefined,
       watermarkedPreviewUrl: job.watermarkedPreviewUrl
     }
+  }, {
+    headers: {
+      "Cache-Control": "no-store"
+    }
   });
 }

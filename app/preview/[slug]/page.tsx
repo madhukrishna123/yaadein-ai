@@ -2,6 +2,7 @@ import { ArrowLeft, BadgeIndianRupee, Download, Share2 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RealBeforeAfter } from "@/components/RealBeforeAfter";
+import { PreviewLiveStatus } from "@/components/PreviewLiveStatus";
 import { ShareButton } from "@/components/ShareButton";
 import { getJobBySlug } from "@/lib/job-repository";
 import { getPaymentForJob } from "@/lib/payment-repository";
@@ -49,7 +50,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
                     ? "This WhatsApp number has already used its free AI preview. Unlock this restore to generate the paid HD result."
                     : isReady
                     ? "This free preview includes a Yaadein watermark. Unlock HD to receive the clean image."
-                    : "Refresh this page after restoration completes to see the watermarked preview."}
+                    : "Keep this page open. We will update it automatically when your preview is ready."}
             </p>
             <div className="mt-6 rounded-[8px] border border-white/10 bg-black/20 p-4 text-sm text-[#d8cbb9]">
               Restoration ID: <span className="text-heirloom">{job.id}</span>
@@ -60,7 +61,9 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
               <br />
               Payment: <span className="text-heirloom">{isPaid ? "paid" : payment?.status ?? "not started"}</span>
             </div>
-            {isHdReady && job.restoredHdUrl ? (
+            {!isReady && !isPaid && !needsPaymentBeforePreview ? (
+              <PreviewLiveStatus slug={job.sharePageSlug} initialStatus={job.status} />
+            ) : isHdReady && job.restoredHdUrl ? (
               <div className="mt-6 grid gap-3">
                 <a
                   className="inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink"
@@ -83,13 +86,13 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
                   <Download size={18} /> Generate HD export
                 </button>
               </form>
-            ) : (
+            ) : isReady ? (
               <form action={`/api/jobs/${job.id}/payment-link`} method="post">
                 <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink" type="submit">
                   <BadgeIndianRupee size={18} /> Unlock HD for INR {job.priceInr}
                 </button>
               </form>
-            )}
+            ) : null}
             {!isPaid && payment?.razorpayPaymentLinkId ? (
               <form action={`/api/jobs/${job.id}/payment-refresh`} method="post">
                 <button className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-[8px] border border-heirloom/35 bg-heirloom/10 px-4 py-3 text-sm font-semibold text-heirloom" type="submit">
@@ -97,15 +100,17 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
                 </button>
               </form>
             ) : null}
-            <div className="mt-3 grid grid-cols-2 gap-3">
-              <ShareButton url={job.beforeAfterShareUrl ?? job.restoredHdUrl ?? afterUrl ?? `/preview/${job.sharePageSlug}`} />
-              <a
-                className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm"
-                href={isPaid && isHdReady ? hdDownloadUrl : afterUrl ?? "#"}
-              >
-                <Download size={16} /> Save
-              </a>
-            </div>
+            {afterUrl ? (
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <ShareButton url={job.beforeAfterShareUrl ?? job.restoredHdUrl ?? afterUrl ?? `/preview/${job.sharePageSlug}`} />
+                <a
+                  className="inline-flex items-center justify-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3 text-sm"
+                  href={isPaid && isHdReady ? hdDownloadUrl : afterUrl}
+                >
+                  <Download size={16} /> Save
+                </a>
+              </div>
+            ) : null}
           </aside>
         </div>
       </div>
