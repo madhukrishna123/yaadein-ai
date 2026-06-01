@@ -94,7 +94,7 @@ export default function Home() {
               Bring old photos back to life.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#d8cbb9]">
-              Old photos fade. Memories don&apos;t have to. Restore the expressions that tell your family&apos;s story.
+              Old photos fade. Memories don&apos;t have to. Restore the expressions that tell your family&apos;s story now.
             </p>
             <div className="mt-6 inline-flex flex-wrap items-center gap-3 rounded-[8px] border border-heirloom/25 bg-heirloom/10 px-4 py-3 text-sm text-[#f5e6c7]">
               <BadgeIndianRupee size={18} />
