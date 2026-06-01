@@ -12,6 +12,7 @@ import {
   pricingPlans,
   restorationStyles
 } from "@/lib/yaadein-data";
+import { YaadeinLogo } from "@/components/YaadeinLogo";
 
 type DemoState = "idle" | "uploaded" | "processing" | "ready";
 
@@ -97,7 +98,7 @@ export function FakeWhatsAppDemo() {
             <MessageCircle size={20} />
           </div>
           <div>
-            <p className="font-semibold">Yaadein</p>
+            <YaadeinLogo markClassName="hidden" textClassName="text-base" />
             <p className="text-xs text-[#b9ac9a]">Private restoration studio</p>
           </div>
         </div>
