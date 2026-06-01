@@ -11,7 +11,7 @@ export async function handleWhatsAppGreeting(from: string) {
   await sendWhatsAppText(
     phone,
     [
-      "Namaste. Welcome to Yaadein AI.",
+      "Namaste. Welcome to Yaadein.",
       "",
       "Send one old photo here. We will restore it and send a free watermarked preview on WhatsApp.",
       "",
@@ -139,7 +139,7 @@ export async function deliverPaidWhatsAppJob(jobId: string) {
   }
 
   await updateJob(updated.id, { status: "delivered" });
-  await sendWhatsAppText(updated.customerPhone, "Thank you for trusting Yaadein AI. Your memories deserve HD.");
+  await sendWhatsAppText(updated.customerPhone, "Thank you for trusting Yaadein. Your memories deserve HD.");
   return getJob(updated.id);
 }
 

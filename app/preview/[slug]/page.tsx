@@ -29,7 +29,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
     <main className="min-h-screen px-5 py-8 sm:px-8 lg:px-12">
       <div className="mx-auto max-w-5xl">
         <Link className="mb-8 inline-flex items-center gap-2 text-sm text-[#cdbfab]" href="/">
-          <ArrowLeft size={16} /> Back to Yaadein AI
+          <ArrowLeft size={16} /> Back to Yaadein
         </Link>
         <div className="grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-start">
           <RealBeforeAfter beforeUrl={job.sourceImageUrl} afterUrl={afterUrl} />
@@ -48,7 +48,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
                   : needsPaymentBeforePreview
                     ? "This WhatsApp number has already used its free AI preview. Unlock this restore to generate the paid HD result."
                     : isReady
-                    ? "This free preview includes a Yaadein AI watermark. Unlock HD to receive the clean image."
+                    ? "This free preview includes a Yaadein watermark. Unlock HD to receive the clean image."
                     : "Refresh this page after restoration completes to see the watermarked preview."}
             </p>
             <div className="mt-6 rounded-[8px] border border-white/10 bg-black/20 p-4 text-sm text-[#d8cbb9]">

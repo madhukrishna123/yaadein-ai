@@ -19,7 +19,7 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
     <main className="flex min-h-screen items-center justify-center px-5 py-10">
       <section className="w-full max-w-sm">
         <Link className="mb-6 inline-flex items-center gap-2 text-sm text-[#cdbfab] transition hover:text-heirloom" href="/">
-          <ArrowLeft size={16} /> Back to Yaadein AI
+          <ArrowLeft size={16} /> Back to Yaadein
         </Link>
 
         <div className="glass-panel rounded-[8px] p-6">
@@ -28,7 +28,7 @@ export default async function AdminLoginPage({ searchParams }: AdminLoginPagePro
           </div>
           <p className="text-sm uppercase tracking-[0.22em] text-heirloom">Private Access</p>
           <h1 className="mt-3 text-3xl font-semibold">Operations login</h1>
-          <p className="mt-3 text-sm leading-6 text-[#b9ac9a]">For Yaadein AI operators only.</p>
+          <p className="mt-3 text-sm leading-6 text-[#b9ac9a]">For Yaadein operators only.</p>
         </div>
 
         {needsSetup ? (

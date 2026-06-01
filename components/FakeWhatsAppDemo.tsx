@@ -97,7 +97,7 @@ export function FakeWhatsAppDemo() {
             <MessageCircle size={20} />
           </div>
           <div>
-            <p className="font-semibold">Yaadein AI</p>
+            <p className="font-semibold">Yaadein</p>
             <p className="text-xs text-[#b9ac9a]">Private restoration studio</p>
           </div>
         </div>

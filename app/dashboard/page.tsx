@@ -14,7 +14,7 @@ export default function DashboardPage() {
         <div className="mb-10 flex items-center justify-between">
           <div>
             <p className="text-sm uppercase tracking-[0.22em] text-heirloom">Customer dashboard</p>
-            <h1 className="mt-3 text-4xl font-semibold">Your Yaadein AI restores</h1>
+            <h1 className="mt-3 text-4xl font-semibold">Your Yaadein restores</h1>
           </div>
           <Link className="rounded-[8px] bg-heirloom px-4 py-3 font-semibold text-ink" href="/">
             New restore

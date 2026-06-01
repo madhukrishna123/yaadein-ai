@@ -71,7 +71,7 @@ export default async function AdminPage() {
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="text-sm uppercase tracking-[0.22em] text-heirloom">Admin Agent</p>
-            <h1 className="mt-3 text-4xl font-semibold">Yaadein AI operations</h1>
+            <h1 className="mt-3 text-4xl font-semibold">Yaadein operations</h1>
           </div>
           <div className="flex gap-3">
             <a className="inline-flex items-center gap-2 rounded-[8px] border border-white/12 bg-white/[0.06] px-4 py-3" href="/admin">

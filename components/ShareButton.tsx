@@ -7,8 +7,8 @@ export function ShareButton({ url }: { url: string }) {
     const absoluteUrl = new URL(url, window.location.origin).toString();
     if (navigator.share) {
       await navigator.share({
-        title: "Yaadein AI restoration",
-        text: "See this restored memory from Yaadein AI.",
+        title: "Yaadein restoration",
+        text: "See this restored memory from Yaadein.",
         url: absoluteUrl
       });
       return;

@@ -68,7 +68,7 @@ export default function Home() {
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/70 px-5 py-4 backdrop-blur-xl sm:px-8 lg:px-12">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link className="text-lg font-semibold text-[#fff7ea]" href="/">
-            Yaadein AI
+            Yaadein
           </Link>
           <div className="hidden items-center gap-6 text-sm text-[#cbbda9] sm:flex">
             <a href="#restore">Restore</a>
@@ -182,7 +182,7 @@ export default function Home() {
 
       <section className="px-5 py-16 sm:px-8 lg:px-12">
         <div className="mx-auto max-w-6xl rounded-[8px] border border-heirloom/25 bg-heirloom/10 p-8 text-center">
-          <p className="text-sm uppercase tracking-[0.22em] text-heirloom">Yaadein AI</p>
+          <p className="text-sm uppercase tracking-[0.22em] text-heirloom">Yaadein</p>
           <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold text-[#fff7ea] sm:text-4xl">
             Your memories deserve HD.
           </h2>

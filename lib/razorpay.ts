@@ -26,7 +26,7 @@ export async function createRazorpayPaymentLink(input: {
       amount: amountInr * 100,
       currency: "INR",
       accept_partial: false,
-      description: `Yaadein AI HD restore ${input.job.id}`,
+      description: `Yaadein HD restore ${input.job.id}`,
       customer,
       notify: {
         sms: Boolean(customerContact),

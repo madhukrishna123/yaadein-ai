@@ -21,7 +21,7 @@ export function RealBeforeAfter({
         src={beforeUrl}
       />
       <img
-        alt="Restored Yaadein AI preview"
+        alt="Restored Yaadein preview"
         className="absolute inset-0 h-full w-full object-contain"
         src={finalAfterUrl}
         style={{ clipPath: `inset(0 0 0 ${position}%)` }}

@@ -20,7 +20,7 @@ export async function createWatermarkedPreview(inputBuffer: Buffer) {
       <rect width="100%" height="100%" fill="url(#shade)"/>
       <g transform="translate(${Math.round(targetWidth * 0.06)} ${Math.round(targetHeight * 0.86)})">
         <rect x="0" y="-${fontSize * 1.35}" rx="10" ry="10" width="${fontSize * 11.8}" height="${fontSize * 2.05}" fill="#080706" opacity="0.72"/>
-        <text x="${fontSize * 0.7}" y="0" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" fill="#f4d27d">Yaadein AI Preview</text>
+        <text x="${fontSize * 0.7}" y="0" font-family="Arial, Helvetica, sans-serif" font-size="${fontSize}" font-weight="700" fill="#f4d27d">Yaadein Preview</text>
       </g>
     </svg>
   `);
