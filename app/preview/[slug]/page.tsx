@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RealBeforeAfter } from "@/components/RealBeforeAfter";
 import { PreviewLiveStatus } from "@/components/PreviewLiveStatus";
+import { HdExportStatus } from "@/components/HdExportStatus";
 import { ShareButton } from "@/components/ShareButton";
 import { getJobBySlug } from "@/lib/job-repository";
 import { getPaymentForJob } from "@/lib/payment-repository";
@@ -81,11 +82,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ slug: 
                 ) : null}
               </div>
             ) : isPaid ? (
-              <form action={`/api/jobs/${job.id}/export-hd`} method="post">
-                <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink" type="submit">
-                  <Download size={18} /> Generate HD export
-                </button>
-              </form>
+              <HdExportStatus jobId={job.id} />
             ) : isReady ? (
               <form action={`/api/jobs/${job.id}/payment-link`} method="post">
                 <button className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-[8px] bg-heirloom px-5 py-3 font-semibold text-ink" type="submit">
