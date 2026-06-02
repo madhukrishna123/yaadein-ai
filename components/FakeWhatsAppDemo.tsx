@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ImageUp, Loader2, MessageCircle, RotateCcw, Send } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   defaultPricingPlanId,
   defaultRestorationStyleId,
@@ -32,6 +32,7 @@ export function FakeWhatsAppDemo() {
   const [phone, setPhone] = useState("");
   const phoneInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [selectedPlanId, setSelectedPlanId] = useState(defaultPricingPlanId);
   const [selectedStyleId, setSelectedStyleId] = useState(defaultRestorationStyleId);
   const visibleStates = useMemo(() => loadingStates.slice(0, state === "ready" ? 7 : 4), [state]);
@@ -41,6 +42,13 @@ export function FakeWhatsAppDemo() {
   const currentProgressIndex = progressIndexForState(state);
   const statusHeadline = headlineForState(state);
   const statusMessage = messageForState(state, selectedStyle.name);
+
+  useEffect(() => {
+    scrollContainerRef.current?.scrollTo({
+      top: scrollContainerRef.current.scrollHeight,
+      behavior: "smooth"
+    });
+  }, [state, fileName, previewUrl, error]);
 
   async function handleFile(file?: File) {
     if (!file) return;
@@ -125,7 +133,7 @@ export function FakeWhatsAppDemo() {
         <span className="rounded-full bg-mintglass/14 px-3 py-1 text-xs text-mintglass">ready</span>
       </div>
 
-      <div className="scrollbar-clean max-h-[28rem] space-y-3 overflow-y-auto pr-1">
+      <div className="scrollbar-clean max-h-[28rem] space-y-3 overflow-y-auto pr-1" ref={scrollContainerRef}>
         <ChatBubble side="left">Upload one old photo. We will create a free watermarked restoration preview.</ChatBubble>
         <ChatBubble side="left">Scanned photos and clear phone pictures both work. Avoid glare for best results.</ChatBubble>
 
