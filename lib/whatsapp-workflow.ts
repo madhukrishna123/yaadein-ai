@@ -25,9 +25,24 @@ export async function handleWhatsAppImage(input: {
   mediaId: string;
   mimeType?: string;
 }) {
+  return createWhatsAppImageJob(input);
+}
+
+export async function createWhatsAppImageJob(input: {
+  from: string;
+  mediaId: string;
+  mimeType?: string;
+}) {
   const phone = normalizeWhatsAppPhone(input.from);
 
-  await sendWhatsAppText(phone, "We received your memory. Restoring a preview now. This may take a few minutes.");
+  await sendWhatsAppText(
+    phone,
+    [
+      "We received your memory.",
+      "",
+      "We are saving it securely now. You will receive a preview here once restoration is complete."
+    ].join("\n")
+  );
 
   const media = await downloadWhatsAppMedia(input.mediaId);
   const jobId = createJobId();
@@ -41,29 +56,73 @@ export async function handleWhatsAppImage(input: {
     restorationStyle: "natural"
   });
 
+  await sendWhatsAppText(
+    phone,
+    [
+      `Your restoration ID is ${job.id}.`,
+      "",
+      "Status page:",
+      absoluteAppUrl(`/preview/${job.sharePageSlug}`)
+    ].join("\n")
+  );
+
+  return job;
+}
+
+export async function processWhatsAppPreviewJob(jobId: string) {
+  const job = await getJob(jobId);
+  if (!job) return undefined;
+  if (job.status !== "photo_received" && job.status !== "restoring") return job;
+
+  const phone = job.customerPhone;
+  await sendWhatsAppText(
+    phone,
+    [
+      "We are restoring your free preview now.",
+      "",
+      "This usually takes 1-3 minutes. You do not need to do anything."
+    ].join("\n")
+  );
+
   const customer = await getCustomerByPhone(phone);
   const freePreviewLimit = Number(process.env.FREE_PREVIEW_LIMIT_PER_PHONE ?? 1);
   const canUseFreePreview = !customer || customer.freePreviewCount < freePreviewLimit;
   const payment = await ensurePaymentLinkForJob(job, appBaseUrl());
+  const paymentUrl = payment.razorpayPaymentLinkUrl ?? absoluteAppUrl(`/preview/${job.sharePageSlug}`);
 
   if (!canUseFreePreview) {
     await updateJob(job.id, { status: "awaiting_payment" });
     await sendWhatsAppText(
       phone,
-      [
-        "This WhatsApp number has already used its free AI preview.",
-        "",
-        `Unlock this restore for INR ${job.priceInr}:`,
-        payment.razorpayPaymentLinkUrl ?? absoluteAppUrl(`/preview/${job.sharePageSlug}`)
-      ].join("\n")
+      buildUpiPaymentMessage({
+        priceInr: job.priceInr,
+        paymentUrl,
+        intro: "This WhatsApp number has already used its free preview."
+      })
     );
     return job;
+  }
+
+  if (!job.sourceImagePath) {
+    await updateJob(job.id, {
+      status: "manual_review",
+      failureReason: "No source image path exists for WhatsApp preview."
+    });
+    await sendWhatsAppText(
+      phone,
+      [
+        "We could not prepare this photo automatically.",
+        "",
+        "Our team will review it and help you shortly."
+      ].join("\n")
+    );
+    return undefined;
   }
 
   await updateJob(job.id, { status: "restoring", failureReason: undefined });
   const result = await restorePhotoForJob({
     jobId: job.id,
-    sourceImagePath: job.sourceImagePath ?? original.absolutePath,
+    sourceImagePath: job.sourceImagePath,
     mode: "preview",
     style: job.restorationStyle
   });
@@ -83,15 +142,21 @@ export async function handleWhatsAppImage(input: {
     await sendWhatsAppImage(
       phone,
       updated.watermarkedPreviewUrl,
-      [
-        "Your free watermarked preview is ready.",
-        "",
-        `Unlock HD restoration for INR ${updated.priceInr}:`,
-        payment.razorpayPaymentLinkUrl ?? absoluteAppUrl(`/preview/${updated.sharePageSlug}`)
-      ].join("\n")
+      buildUpiPaymentMessage({
+        priceInr: updated.priceInr,
+        paymentUrl,
+        intro: "Your free watermarked preview is ready."
+      })
     );
   } else {
-    await sendWhatsAppText(phone, `Your preview is ready. Unlock HD here: ${payment.razorpayPaymentLinkUrl ?? absoluteAppUrl(`/preview/${job.sharePageSlug}`)}`);
+    await sendWhatsAppText(
+      phone,
+      buildUpiPaymentMessage({
+        priceInr: job.priceInr,
+        paymentUrl,
+        intro: "Your preview is ready."
+      })
+    );
   }
 
   return updated ?? job;
@@ -103,6 +168,15 @@ export async function deliverPaidWhatsAppJob(jobId: string) {
   if (job.status === "delivered") return job;
 
   await updateJob(job.id, { status: "paid", failureReason: undefined });
+  await sendWhatsAppText(
+    job.customerPhone,
+    [
+      "Payment received.",
+      "",
+      "We are preparing your clean HD photo now. It usually takes 1-3 minutes."
+    ].join("\n")
+  );
+
   const sourceImagePath = job.sourceImagePath;
   if (!sourceImagePath) {
     await updateJob(job.id, { status: "manual_review", failureReason: "No source image path exists for WhatsApp HD delivery." });
@@ -141,6 +215,19 @@ export async function deliverPaidWhatsAppJob(jobId: string) {
   await updateJob(updated.id, { status: "delivered" });
   await sendWhatsAppText(updated.customerPhone, "Thank you for trusting Yaadein. Your memories deserve HD.");
   return getJob(updated.id);
+}
+
+function buildUpiPaymentMessage(input: { intro: string; priceInr: number; paymentUrl: string }) {
+  return [
+    input.intro,
+    "",
+    "Like this preview?",
+    `Pay INR ${input.priceInr} by UPI to receive the clean HD photo:`,
+    input.paymentUrl,
+    "",
+    "You can use PhonePe, Google Pay, Paytm, BHIM, or any UPI app.",
+    "After payment, we will send the HD photo here on WhatsApp."
+  ].join("\n");
 }
 
 function extensionForMime(mimeType: string) {

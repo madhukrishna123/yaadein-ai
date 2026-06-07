@@ -269,6 +269,26 @@ export async function getAdminJobs() {
   };
 }
 
+export async function getJobsByStatuses(statuses: RestorationJob["status"][], limit = 5) {
+  if (!hasDatabaseConfig()) {
+    return mockJobs.filter((job) => statuses.includes(job.status)).slice(0, limit);
+  }
+
+  const result = await query<JobRow>(
+    `
+      select restoration_jobs.*, customers.whatsapp_phone
+      from restoration_jobs
+      left join customers on customers.id = restoration_jobs.customer_id
+      where restoration_jobs.status = any($1)
+      order by restoration_jobs.created_at asc
+      limit $2
+    `,
+    [statuses, limit]
+  );
+
+  return result.rows.map((row) => mapJob(row));
+}
+
 function summarizeJobs(jobs: RestorationJob[], storageMode: "database" | "memory"): AdminSummary {
   const paid = jobs.filter((job) => ["paid", "hd_ready", "delivered"].includes(job.status)).length;
   const totalJobs = jobs.length;

@@ -60,6 +60,7 @@ R2_PUBLIC_BASE_URL=
 RAZORPAY_KEY_ID=
 RAZORPAY_KEY_SECRET=
 RAZORPAY_WEBHOOK_SECRET=
+INTERNAL_JOB_SECRET=
 
 WHATSAPP_WEBHOOK_VERIFY_TOKEN=
 WHATSAPP_ACCESS_TOKEN=
@@ -88,7 +89,20 @@ NEXT_PUBLIC_APP_URL=https://yaadein-ai.nestrift.com npm run server:check
 8. Open `/admin/login` and confirm the admin page requires the password.
 9. Create one Razorpay test payment link from a preview page.
 10. Add the production webhook URL in Razorpay once the domain is live.
-11. Only then enable marketing traffic.
+11. Add the WhatsApp webhook URL in Meta:
+
+```text
+https://your-domain.com/api/webhooks/whatsapp
+```
+
+12. Run the WhatsApp job processor every minute:
+
+```bash
+curl -H "Authorization: Bearer $INTERNAL_JOB_SECRET" https://your-domain.com/api/internal/process-jobs
+```
+
+13. Test one WhatsApp flow end to end: send photo, receive preview, pay by UPI, receive HD photo.
+14. Only then enable marketing traffic.
 
 ## Production Blockers Before Real Users
 
@@ -96,7 +110,22 @@ NEXT_PUBLIC_APP_URL=https://yaadein-ai.nestrift.com npm run server:check
 - Add Razorpay payment unlock before HD export.
 - Add one-free-preview-per-phone rule.
 - Add WhatsApp Business Cloud API.
+- Add a minute-based trigger for `/api/internal/process-jobs`.
 - Set a strong `ADMIN_PASSWORD` and unique `ADMIN_SESSION_SECRET`.
+
+## WhatsApp UPI-First Flow
+
+The launch flow is designed for non-technical customers:
+
+1. Customer sends an old photo to the Yaadein WhatsApp number.
+2. Yaadein replies that the photo was received and gives a restoration ID.
+3. The job processor creates the free watermarked preview.
+4. Yaadein sends the preview on WhatsApp.
+5. The caption asks the customer to pay by UPI through the Razorpay link.
+6. Razorpay webhook marks the job as paid.
+7. The job processor generates the HD photo and sends it back on WhatsApp.
+
+Payment copy should stay simple: UPI first, PhonePe/Google Pay/Paytm/BHIM examples, and no technical words.
 
 ## Local Postgres Setup
 
